@@ -4,7 +4,7 @@ import axios from "axios";
 /**
  *
  * @param {string} url The URL to fetch data from
- * @returns {{data: import("axios").AxiosResponse<any, any> | null, error: unknown | null, loading: boolean}} An object containing the data, error, and loading state
+ * @returns {{data: object | import("axios").AxiosResponse<any, any> | null, error: unknown | null, loading: boolean}} An object containing the data, error, and loading state
  * @returns
  */
 export const useFetchData = (url) => {
