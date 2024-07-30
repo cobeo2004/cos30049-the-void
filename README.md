@@ -27,12 +27,15 @@ Leaves blank !
   - Programming Language: `Python`.
   - Libraries & Frameworks:
     - `FastAPI`: For creating a scalable and RESTful Application Programming Interface (API).
+    - `Prisma`: A powerful **Object Relational Mapping (ORM)** for creating database without actually interacting with `SQL language`.
   - Smart Transactions:
     - `Solidity`: Main Programming Language for creating Smart Transactions in `Ethereum` platform.
     - `Ganache`: Virtual `Ethereum` environment used for testing and deploying blockhain.
+  - Hosting:
+    - `Docker` and `docker-compose`: To host the `PostgreSQL` image in a safe virtual environment.
 - **Database**
 
-  - `MySQL`: Main relational database for the project.
+  - `PostgreSQL`: Main relational database for the project.
 
 - **Version Control**
   - `Github`: Controlling the version and the development of the project.
