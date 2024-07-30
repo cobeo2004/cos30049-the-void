@@ -26,7 +26,7 @@ Leaves blank !
 - **Back-end**
   - Programming Language: `Python`.
   - Libraries & Frameworks:
-    - `Django`: Main MTV (Model - Template - View) Framework use for creating web applications.
+    - `FastAPI`: For creating a scalable and RESTful Application Programming Interface (API).
     - `DjangoRESTapi`: Additional `Django` library use for creating RESTful API.
     - `DjangoORM`: Main **Object-relational Mapping (ORM)** library uses as an extension library for `Django`.
   - Smart Transactions:
