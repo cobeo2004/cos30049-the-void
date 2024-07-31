@@ -5,6 +5,7 @@ import React from "react";
  * @param {string | null} title The title of the document
  */
 export function useDocumentTitle(title) {
+  if (typeof title !== "string") throw new Error("Title must be a string");
   React.useEffect(() => {
     document.title = title ?? "Untitled";
   }, [title]);

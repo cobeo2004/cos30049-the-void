@@ -7,6 +7,7 @@ import React from "react";
  * @returns {T} The throttled value
  */
 export function useThrottle(value, limit) {
+  if (typeof limit !== "number") throw new Error("Limit should be a number");
   const [throttled, setThrottled] = React.useState(value);
   const lastRan = React.useRef(Date.now());
 
