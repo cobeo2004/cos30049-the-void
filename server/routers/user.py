@@ -1,45 +1,42 @@
 from fastapi import APIRouter, Depends
-from prisma import Prisma
-from contextlib import asynccontextmanager
 from controller import PostController
+from models import PostModel
+from context import PrismaTransaction, PrismaContext
+from prisma import Prisma
 
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@asynccontextmanager
-async def get_prisma():
-    db = Prisma()
-    await db.connect()
-    try:
-        yield db
-    finally:
-        await db.disconnect()
-
-
-@asynccontextmanager
-async def get_post_controller():
-    controller = PostController()
-    try:
-        yield controller
-    except Exception as e:
-        raise e
-
-
-async def get_db():
-    async with get_prisma() as db:
-        yield db
-
-
-async def get_controller():
-    async with get_post_controller() as controller:
-        yield controller
-
-
 @router.get("")
-async def read_users(db: Prisma = Depends(get_db), controller: PostController = Depends(get_controller)):
-    return await controller.get_users(db)
+@PrismaTransaction
+async def read_posts(controller: PostController = Depends(PostController)):
+    context = PrismaContext.get()
+    return await controller.get_posts(context)
 
 
 @router.get("/{item_id}")
-async def read_user(item_id: int, db: Prisma = Depends(get_db), controller: PostController = Depends(get_controller)):
-    return await controller.get_user(item_id, db)
+@PrismaTransaction
+async def read_post_by_id(item_id: int, controller: PostController = Depends(PostController)):
+    context = PrismaContext.get()
+    return await controller.get_post(item_id, context)
+
+
+@router.post("")
+@PrismaTransaction
+async def append_post(model: PostModel, controller: PostController = Depends(PostController)):
+    context = PrismaContext.get()
+    return await controller.add_post(model, context)
+
+
+@router.put("/{item_id}")
+@PrismaTransaction
+async def update_post(item_id: int, model: PostModel, controller: PostController = Depends(PostController)):
+    context = PrismaContext.get()
+    return await controller.update_post(item_id, model, context)
+
+
+@router.delete("/{item_id}")
+@PrismaTransaction
+async def delete_post(item_id: int, controller: PostController = Depends(PostController)):
+    context = PrismaContext.get()
+    return await controller.delete_post(item_id, context)
