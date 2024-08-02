@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 from controller import PostController
 from models import PostModel
 from context import PrismaTransaction, PrismaContext
-from prisma import Prisma
 
 router = APIRouter(prefix="/user", tags=["user"])
 
