@@ -1,8 +1,8 @@
-# Blockchain Application by The Void
+# Civil Aviation Prediction Application by The Void
 
 ## Brief introduction
 
-Welcome to our project! In this repository, we will be working on an exciting and innovative solution. Our goal is to create a good looking Blockchain website using Web 3.0 technologies and provide a seamless experience for our users. We are a dedicated team of developers who are passionate about creating cutting-edge software. Join us on this journey as we strive to make a positive impact in the world of technology.
+Welcome to our project! In this repository, we will be working on an exciting and innovative solution. Our goal is to create a good looking website that leverages the power AI to predict the price and the delay causes of the airline carriers and provide a seamless experience for our users. We are a dedicated team of developers who are passionate about creating cutting-edge software. Join us on this journey as we strive to make a positive impact in the world of technology.
 
 ## Team member
 
@@ -22,19 +22,20 @@ Leaves blank !
     - `React`: Main library for writing `HTML` code in `JavaScript`.
     - `TailwindCSS`: For a powerful and easy styling.
     - `shadcn/ui`: Empowers the `radix-ui` library by creating instant components.
+    - `aceternity-ui`: Empowers the `radix-ui`, `shadcn/ui` and `framer-motion` library to create instant and smooth moition instant components.
     - `tanstack/react-query-table`: Make table query easier than before.
 - **Back-end**
   - Programming Language: `Python`.
   - Libraries & Frameworks:
     - `FastAPI`: For creating a scalable and RESTful Application Programming Interface (API).
     - `Prisma`: A powerful **Object Relational Mapping (ORM)** for creating database without actually interacting with `SQL language`.
-  - Smart Transactions:
-    - `Solidity`: Main Programming Language for creating Smart Transactions in `Ethereum` platform.
-    - `Ganache`: Virtual `Ethereum` environment used for testing and deploying blockhain.
+  - Machine Learning:
+    - `Tensorflow`: For a full-range framework that supports create **neutral network**.
+    - `pandas`, `scikit-learn`: Leverage handling faulty data.
+    - `Apache Kafka`: For a scalable and reliable **data streaming** that could handles big amount of requests.
   - Hosting:
-    - `Docker` and `docker-compose`: To host the `PostgreSQL` image in a safe virtual environment.
+    - `Docker` and `docker-compose`: To host the `PostgreSQL`, `Apache Kafka` and `Apache ZooKeeper` images in a safe virtual environment.
 - **Database**
-
   - `PostgreSQL`: Main relational database for the project.
 
 - **Version Control**
