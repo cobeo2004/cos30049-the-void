@@ -13,6 +13,10 @@ const cameraZ = 300;
 
 let numbersOfRings = [0];
 
+/**
+ * @param {import("./index").WorldProps} props
+ * @returns {React.JSX.Element}
+ */
 export function Globe({ globeConfig, data }) {
   const [globeData, setGlobeData] = useState(null);
 
