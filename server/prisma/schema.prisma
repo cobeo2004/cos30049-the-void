@@ -4,8 +4,9 @@ datasource db {
 }
 
 generator client {
-    provider             = "prisma-client-py"
-    recursive_type_depth = 5
+    provider               = "prisma-client-py"
+    partial_type_generator = "prisma/generator/Post.py"
+    recursive_type_depth   = 10
 }
 
 model Post {

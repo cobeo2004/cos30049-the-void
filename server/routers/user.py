@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from controller import PostController
-from models import PostModel
+from prisma.partials import PostAllFields
 from context import PrismaTransaction, PrismaContext
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -22,14 +22,14 @@ async def read_post_by_id(item_id: int, controller: PostController = Depends(Pos
 
 @router.post("")
 @PrismaTransaction
-async def append_post(model: PostModel, controller: PostController = Depends(PostController)):
+async def append_post(model: PostAllFields, controller: PostController = Depends(PostController)):
     context = PrismaContext.get()
     return await controller.add_post(model, context)
 
 
 @router.put("/{item_id}")
 @PrismaTransaction
-async def update_post(item_id: int, model: PostModel, controller: PostController = Depends(PostController)):
+async def update_post(item_id: int, model: PostAllFields, controller: PostController = Depends(PostController)):
     context = PrismaContext.get()
     return await controller.update_post(item_id, model, context)
 

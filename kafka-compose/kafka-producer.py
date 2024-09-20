@@ -34,7 +34,7 @@ def main():
                 value=json.dumps(weather)
             )
             print("Produced. Sleeping...")
-            time.sleep(1)
+            time.sleep(5)
 
 
 if __name__ == "__main__":
