@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Navbar } from "components/navbar";
 /**
  *
  * @param {Object} props
@@ -9,8 +9,8 @@ import React from "react";
 const RootLayout = (props) => {
   return (
     <div>
-      <h1>Root Layout</h1>
-      {props.children}
+      <Navbar />
+      <div className="h-screen w-full">{props.children}</div>
     </div>
   );
 };

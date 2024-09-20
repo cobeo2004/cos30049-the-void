@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouteParams } from "../../../hooks/useRouteParams";
+import { useRouteParams } from "hooks/useRouteParams";
 
 const IdRoutePage = () => {
   const { id } = useRouteParams();
