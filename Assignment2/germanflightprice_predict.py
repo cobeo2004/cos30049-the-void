@@ -106,7 +106,10 @@ df = pd.read_csv('German Air Fares.csv')
 print(df.head(5))
 
 # %% [markdown]
-# ## Display statistics of the datasets
+# <h1>Exploratory Data Analysis</h1>
+
+# %% [markdown]
+# ### Display statistics of the datasets
 # - Display the shape (x,y) of the dataset using `shape()` function.
 # - Display the type of the column using `dtype()` function.
 # - Describe the total number, the unique number, the top value, the frequency statistic of the data using `describe()` function
@@ -118,7 +121,7 @@ print("\n Column Type: \n", df.dtypes)
 print("\nSummary statistics:\n", df.describe())
 
 # %% [markdown]
-# ## Display duplications and inconsistences
+# ### Display duplications and inconsistences
 # - Display total missing values for each column using `isnull()` function.
 # - Display the total duplicated rows using `duplicated()` function.
 # - Display the total unique value of each column using `nunique()` function.
@@ -132,7 +135,7 @@ for col in df.columns:
     print(col, ":", df[col].nunique())
 
 # %% [markdown]
-# ## Display number of each categorized variables for each columns
+# ### Display number of each categorized variables for each columns
 
 # %%
 # analyze categorical variables:
@@ -143,7 +146,7 @@ for col in categorical_cols:
 
 
 # %% [markdown]
-# ## Data Cleaning and Preprocessing
+# ## Data Preprocessing
 
 # %% [markdown]
 # ### `standardize_time()` helper function
@@ -257,7 +260,10 @@ def convert_number_date_distance(time_str: Annotated[str, Doc("The time-like str
         return None
 
 # %% [markdown]
-# ### Data Cleaning and Preprocessing
+#
+
+# %% [markdown]
+# ### Data Cleaning
 # This section performs data cleaning and preprocessing steps on the DataFrame `df` based on the procedures below:
 #
 # 1. Removes null and duplicate rows
@@ -351,11 +357,11 @@ def times_to_minute(time_obj: Annotated[datetime, Doc("The time object to be con
     return time_obj.hour * 60 + time_obj.minute  # convert time to minutes
 
 # %% [markdown]
-# ### Data Preprocessing and Feature Engineering
+# ### Feature Engineering
 #
 # This section focuses on preprocessing the data and creating new features to enhance our analysis and model performance.
 #
-# ### New Features Created:
+# #### New Features Created:
 #
 # 1. `flight_duration_in_minutes`: Calculates the duration of each flight in minutes.
 #    - For flights with stops, it accounts for potential overnight flights.
@@ -444,7 +450,7 @@ df.isnull().sum()  # double check whether drop successfull or not
 df.describe()
 
 # %% [markdown]
-# ## Handle Outliers of data
+# ## Handle Outliers Of Data
 
 # %% [markdown]
 # ### `detect_outliers()` helper function
@@ -600,10 +606,10 @@ plt.show()
 df.info()
 
 # %% [markdown]
-# ## Analyze and visualize the processed data
+# ### Analyze and Visualize data
 
 # %% [markdown]
-# ### Display the distribution of flight duration using **box plot**
+# #### Display the distribution of flight duration using **box plot**
 
 # %%
 # The distribution of flight duration
@@ -824,7 +830,7 @@ print("Statistical Summary of Numerical Features:")
 print(summary)
 
 # %% [markdown]
-# ## Data spliting and scaling
+# ## Data Spliting, Scaling and Encoding
 
 # %% [markdown]
 # ### Data Splitting
@@ -948,7 +954,10 @@ X_test_preprocessed_cl = pd.concat(
     [X_test_encoded_cl, X_test_scaled_cl], axis=1)
 
 # %% [markdown]
-# ## Feature Selection for **regression model**
+# ## Feature Selection
+
+# %% [markdown]
+# ### Feature Selection for **regression model**
 
 # %% [markdown]
 # ### `stepwise_regression()` helper function
@@ -1165,7 +1174,7 @@ df_classification = pd.concat([pd.concat([X_train_final_cl, z_train_cl], axis=1)
     [X_test_final_cl, z_test_cl], axis=1)], axis=0)
 
 # %% [markdown]
-# ## Model Trainning and Selection
+# ## Model Selection and Training
 
 # %% [markdown]
 # ### Preliminary testing to check the score of the model MSE score for each model
