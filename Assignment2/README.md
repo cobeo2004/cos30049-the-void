@@ -10,7 +10,7 @@ This notebook demonstrates the process of building machine learning models to pr
 
 ## Goal
 
-Our goal is to develop accurate models for predicting flight prices and gain insights into the factors that influence ticket costs in the German air travel market.
+Our goal is to develop accurate models for predicting flight prices and gain insights into the factors that influence fare costs in the German air travel market.
 
 ## Process
 
