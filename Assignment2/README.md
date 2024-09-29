@@ -247,6 +247,10 @@ df["departure_date_distance"] = df["departure_date_distance"].apply(convert_numb
 ### Step 3: Feature Engineering
 
 ```python
+# function to convert time to minutes
+def times_to_minute (time_obj):
+   # Implementation of times_to_minute function
+   pass
 # Create new features
 df["flight_duration_in_minutes"] = df["arrival_time"].apply(times_to_minute) - df["departure_time"].apply(times_to_minute)
 df["departure_time_in_minutes_from_midnight"] = df["departure_time"].apply(times_to_minute)
@@ -262,9 +266,26 @@ df['price_category'] = pd.cut(df['price'], bins=[-float('inf'), 200, 500, float(
 df.drop(columns=["scrape_date", "departure_time", "arrival_time", "departure_date"], inplace=True, axis=1)
 ```
 
-### Step 4: Feature Selection
+### Step 4: Handle Outliers
+- Use IQR method to detect outliers
+- Use capping method to handle outliers
+```python
+lower_bound = df[col].quantile(0.01)  # 1st percentile
+upper_bound = df[col].quantile(0.99)  # 99th percentile
+df[col] = df[col].clip(lower_bound, upper_bound)
+
+```
+
+### Step 5: Feature Selection
 
 ```python
+def stepwise_regression(X, y, significance_level_in=0.05, significance_level_out=0.05):
+    # Implementation of stepwise_regression function
+    pass
+
+def feature_selection_ramdomforestclassifier(X, y):
+    # Implementation of feature_selection_ramdomforestclassifier function
+    pass
 # For regression
 final_features_rg = stepwise_regression(X_train_preprocessed_rg, y_train_rg)
 X_train_final_rg = X_train_preprocessed_rg[final_features_rg]
@@ -276,7 +297,7 @@ X_train_final_cl = X_train_preprocessed_cl[selected_features]
 X_test_final_cl = X_test_preprocessed_cl[selected_features]
 ```
 
-## Model Training
+## Model Training and Model Evaluation
 
 ### Random Forest Regressor
 
@@ -308,6 +329,7 @@ model3.fit(X_train_final_cl, z_train_cl)
 ## Model Evaluation
 
 ```python
+# function to call the model with numeric scorer (evaluation metric)
 def model_train(model_name, X_train, X_test, y_train, y_test):
     model = model_name.fit(X_train, y_train)
     print(f"Training Score: {model.score(X_train, y_train)}")
@@ -317,12 +339,63 @@ def model_train(model_name, X_train, X_test, y_train, y_test):
     print(f"Mean Square Error: {mean_squared_error(y_test, predict_value)}")
     print(f"Mean Absolute Error: {mean_absolute_error(y_test, predict_value)}")
 
+# function to call the classification model (evaluation metric)
+def model_train_classification(model_name, X_train, X_test, y_train, y_test):
+    print(f"Classification Model: {model_name}")
+    model = model_name.fit(X_train, y_train)  # fit the training data into model
+    predict_value = model.predict(X_test)  # predict the result of the test set
+    print(f"Accuracy: {accuracy_score(y_test, predict_value)}")
+    print(f"Precision: {precision_score(y_test, predict_value, average='weighted')}")
+    print(f"Recall: {recall_score(y_test, predict_value, average='weighted')}")
+    print(f"F1 Score: {f1_score(y_test, predict_value, average='weighted')}")
+    print(f"Confusion Matrix:\n{confusion_matrix(y_test, predict_value)}")
+
 # Evaluate regression models
 model_train(model1, X_train_final_rg, X_test_final_rg, y_train_rg, y_test_rg)
 model_train(model2, X_train_final_rg, X_test_final_rg, y_train_rg, y_test_rg)
 
 # Evaluate classification model
 model_train_classification(model3, X_train_final_cl, X_test_final_cl, z_train_cl, z_test_cl)
+```
+
+### Cross validation
+```python
+# the data use to train the regression model also use to validation (should be the whole data not the splitted data because will use kfold to valid the model)
+X_cross_val_rg = df_regression.drop(columns=['price'], axis=1)
+y_cross_val_rg = df_regression['price']
+#validation for the regression model
+models = [model1, model2]  #list of models
+for i, model in enumerate(models, start=1):
+    cv_scores = cross_val_score(model, X_cross_val_rg, y_cross_val_rg, cv=5)  # 5-fold cross-validation
+
+    print(f"Model {i} Cross-validation scores: {cv_scores}")
+    print(f"Model {i} Mean CV score: {cv_scores.mean():.4f}")
+    print(f"Model {i} Standard deviation of CV score: {cv_scores.std():.4f}")
+
+# the data use to train the classification model also use to validation (should be the whole data not the splitted data because will use kfold to valid the model)
+X_cross_val_cl = df_classification.drop(columns=['price_category'], axis=1)
+y_cross_val_cl = df_classification['price_category']
+
+# validation for the classification model
+models = [model3] #list of models
+
+# Define the metrics you want to use
+metrics = {
+    'Accuracy': accuracy_score,
+    'Precision': lambda y_true, y_pred: precision_score(y_true, y_pred, average='weighted'),
+    'Recall': lambda y_true, y_pred: recall_score(y_true, y_pred, average='weighted'),
+    'F1 Score': lambda y_true, y_pred: f1_score(y_true, y_pred, average='weighted')
+}
+
+# Perform cross-validation for each model
+for i, model in enumerate(models, 1):
+    print(f"\nModel {i}:")
+    for metric_name, metric_func in metrics.items():
+        scores = cross_val_score(model, X_cross_val_cl, y_cross_val_cl, cv=5, scoring=make_scorer(metric_func))
+        print(f"{metric_name}:")
+        print(f"  Scores: {scores}")
+        print(f"  Mean: {scores.mean():.4f}")
+        print(f"  Std. Dev: {scores.std():.4f}")
 ```
 
 ## Hyperparameter Tuning
