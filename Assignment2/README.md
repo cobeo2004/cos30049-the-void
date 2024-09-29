@@ -45,49 +45,147 @@ Our goal is to develop accurate models for predicting flight prices and gain ins
    jupyter notebook germanflightprice_predict.ipynb
    ```
 
-3. Execute each cell in order, following these steps:
+3. Execute each cell in order, following these detailed steps:
 
-   a. Data Loading and Exploration:
+   a. **Data Loading and Exploration:**
 
-   - Load the dataset using `pd.read_csv('German Air Fares.csv')`
-   - Examine the data with `df.head()`, `df.info()`, and `df.describe()`
-
-   b. Data Preprocessing:
-
-   - Handle missing values: `df.dropna()`
-   - Convert dates: `pd.to_datetime(df['date_column'])`
-   - Feature engineering:
+   - Load the dataset using `pd.read_csv('German Air Fares.csv')`:
      ```python
-     df['day_of_week'] = df['departure_date'].dt.dayofweek
-     df['month'] = df['departure_date'].dt.month
-     df['days_until_departure'] = (df['departure_date'] - df['scrape_date']).dt.days
+     df = pd.read_csv('German Air Fares.csv')
      ```
-   - Encode categorical variables:
+   - Examine the data with:
+     ```python
+     print(df.head())
+     print(df.info())
+     print(df.describe())
+     ```
+
+   b. **Data Preprocessing:**
+
+   - **Handle Missing Values:**
+
+     ```python
+     df = df.dropna()
+     ```
+
+   - **Convert Dates:**
+
+     ```python
+     df['scrape_date'] = pd.to_datetime(df['scrape_date'], format='%d.%m.%Y')
+     df['departure_date'] = pd.to_datetime(df['departure_date'], format='%d.%m.%Y')
+     ```
+
+   - **Feature Engineering:**
+
+     - Extract day of week, month, and calculate days until departure:
+       ```python
+       df['day_of_week'] = df['departure_date'].dt.dayofweek
+       df['month'] = df['departure_date'].dt.month
+       df['days_until_departure'] = (df['departure_date'] - df['scrape_date']).dt.days
+       ```
+
+   - **Encode Categorical Variables:**
+
      ```python
      encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
-     encoded_features = encoder.fit_transform(df[['categorical_column']])
+     encoded_features = encoder.fit_transform(df[['departure_city', 'arrival_city', 'airline', 'stops']])
+     encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out())
+     df = df.join(encoded_df)
+     df.drop(['departure_city', 'arrival_city', 'airline', 'stops'], axis=1, inplace=True)
      ```
-   - Scale numerical features:
+
+   - **Scale Numerical Features:**
+
      ```python
      scaler = MinMaxScaler()
-     scaled_features = scaler.fit_transform(df[['numerical_column']])
+     df[['price (€)', 'days_until_departure']] = scaler.fit_transform(df[['price (€)', 'days_until_departure']])
      ```
 
-   c. Model Training:
+   - **Feature Selection:**
+     - Use correlation analysis and VIF to select features:
+       ```python
+       corr_matrix = df.corr()
+       print(corr_matrix['price (€)'].sort_values(ascending=False))
+       # Select features with high correlation to the target variable
+       selected_features = ['days_until_departure', 'day_of_week', 'month'] + list(encoder.get_feature_names_out())
+       X = df[selected_features]
+       y = df['price (€)']
+       ```
 
-   - Split the data:
+   c. **Model Training:**
+
+   - **Split the Data:**
+
      ```python
      X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=9214)
      ```
-   - Train the Gradient Boosting Regressor:
+
+   - **Train the Random Forest Regressor:**
+
+     ```python
+     rf_regressor = RandomForestRegressor(random_state=9214)
+     rf_regressor.fit(X_train, y_train)
+     ```
+
+   - **Evaluate the Random Forest Regressor:**
+
+     ```python
+     y_pred_rf = rf_regressor.predict(X_test)
+     mse_rf = mean_squared_error(y_test, y_pred_rf)
+     mae_rf = mean_absolute_error(y_test, y_pred_rf)
+     r2_rf = r2_score(y_test, y_pred_rf)
+     print(f"Random Forest Regressor - Mean Squared Error: {mse_rf}")
+     print(f"Random Forest Regressor - Mean Absolute Error: {mae_rf}")
+     print(f"Random Forest Regressor - R^2 Score: {r2_rf}")
+     ```
+
+   - **Train the Gradient Boosting Regressor:**
+
      ```python
      gb = GradientBoostingRegressor(random_state=9214)
      gb.fit(X_train, y_train)
      ```
 
-   d. Hyperparameter Tuning:
+   - **Evaluate the Gradient Boosting Regressor:**
 
-   - Define parameter grid:
+     ```python
+     y_pred_gb = gb.predict(X_test)
+     mse_gb = mean_squared_error(y_test, y_pred_gb)
+     mae_gb = mean_absolute_error(y_test, y_pred_gb)
+     r2_gb = r2_score(y_test, y_pred_gb)
+     print(f"Gradient Boosting Regressor - Mean Squared Error: {mse_gb}")
+     print(f"Gradient Boosting Regressor - Mean Absolute Error: {mae_gb}")
+     print(f"Gradient Boosting Regressor - R^2 Score: {r2_gb}")
+     ```
+
+   - **Train the Random Forest Classifier:**
+
+     - Convert the target variable to a classification problem (e.g., categorize prices into bins):
+       ```python
+       df['price_category'] = pd.qcut(df['price (€)'], q=4, labels=False)
+       y_class = df['price_category']
+       X_train_class, X_test_class, y_train_class, y_test_class = train_test_split(X, y_class, test_size=0.2, random_state=9214)
+       rf_classifier = RandomForestClassifier(random_state=9214)
+       rf_classifier.fit(X_train_class, y_train_class)
+       ```
+
+   - **Evaluate the Random Forest Classifier:**
+     ```python
+     y_pred_class = rf_classifier.predict(X_test_class)
+     accuracy = accuracy_score(y_test_class, y_pred_class)
+     precision = precision_score(y_test_class, y_pred_class, average='weighted')
+     recall = recall_score(y_test_class, y_pred_class, average='weighted')
+     f1 = f1_score(y_test_class, y_pred_class, average='weighted')
+     print(f"Random Forest Classifier - Accuracy: {accuracy}")
+     print(f"Random Forest Classifier - Precision: {precision}")
+     print(f"Random Forest Classifier - Recall: {recall}")
+     print(f"Random Forest Classifier - F1 Score: {f1}")
+     ```
+
+   d. **Hyperparameter Tuning for Gradient Boosting Regressor:**
+
+   - **Define Parameter Grid:**
+
      ```python
      param_grid = {
          'n_estimators': [100, 200],
@@ -99,22 +197,37 @@ Our goal is to develop accurate models for predicting flight prices and gain ins
          'max_features': ['sqrt', None]
      }
      ```
-   - Perform Grid Search:
+
+   - **Perform Grid Search:**
+
      ```python
-     grid_search = GridSearchCV(gb, param_grid, cv=3, n_jobs=-1, verbose=2, scoring=custom_score)
+     grid_search = GridSearchCV(gb, param_grid, cv=3, n_jobs=-1, verbose=2, scoring='neg_mean_squared_error')
      grid_search.fit(X_train, y_train)
      ```
-   - Train best model:
+
+   - **Train Best Model:**
+
      ```python
      best_gb = GradientBoostingRegressor(**grid_search.best_params_, random_state=9214)
      best_gb.fit(X_train, y_train)
+     ```
+
+   - **Evaluate the Best Gradient Boosting Regressor:**
+     ```python
+     y_pred_best_gb = best_gb.predict(X_test)
+     mse_best_gb = mean_squared_error(y_test, y_pred_best_gb)
+     mae_best_gb = mean_absolute_error(y_test, y_pred_best_gb)
+     r2_best_gb = r2_score(y_test, y_pred_best_gb)
+     print(f"Best Gradient Boosting Regressor - Mean Squared Error: {mse_best_gb}")
+     print(f"Best Gradient Boosting Regressor - Mean Absolute Error: {mae_best_gb}")
+     print(f"Best Gradient Boosting Regressor - R^2 Score: {r2_best_gb}")
      ```
 
 ### 3. Using the Model for Prediction
 
 After training, use the model for predictions as follows:
 
-1. Prepare your input data in the same format as X_test_final_rg.
+1. Prepare your input data in the same format as `X_test`.
 
 2. Make predictions:
 
