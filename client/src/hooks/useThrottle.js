@@ -24,3 +24,14 @@ export function useThrottle(value, limit) {
 
   return throttled;
 }
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+function test(a, b) {
+  return a + b;
+}
+
+console.log(test(1, 2));

@@ -36,6 +36,7 @@ Leaves blank !
   - Hosting:
     - `Docker` and `docker-compose`: To host the `PostgreSQL`, `Apache Kafka` and `Apache ZooKeeper` images in a safe virtual environment.
 - **Database**
+
   - `PostgreSQL`: Main relational database for the project.
 
 - **Version Control**

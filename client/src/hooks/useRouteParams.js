@@ -1,5 +1,5 @@
 import { useParams, useLocation } from "react-router-dom";
-import { useRouteParam } from "../Router";
+import { useRouteParam } from "Router";
 
 /**
  * @typedef {Object.<string, string|string[]|undefined>} RouteParams
