@@ -50,7 +50,7 @@ python --version
 
 # %%
 # Install required libraries using requirements.txt
-from typing import Annotated, Union
+from typing_extensions import Annotated, Union, Doc
 from sklearn.svm import SVR
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
@@ -66,7 +66,7 @@ from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-%pip install - r requirements.txt
+# %pip install - r requirements.txt
 ###
 
 # OR if you prefer installing libraries manually
@@ -165,7 +165,7 @@ for col in categorical_cols:
 
 # %%
 # Convert the arrival and departure time to same format  (consistently in 24 hour format)
-def standardize_time(time_str: Annotated[str, "The time-like string to be converted"]) -> Annotated[str, "The standardized time string"]:
+def standardize_time(time_str: Annotated[str, Doc("The time-like string to be converted")]) -> Annotated[str, Doc("The standardized time string")]:
     """
     Convert a time-like string to a standardized 24-hour format string.
 
@@ -229,7 +229,7 @@ def standardize_time(time_str: Annotated[str, "The time-like string to be conver
 # convert the departure_date_distance format to day format (how long)  // def: departure_date_distance: How far in advance the flight was booked
 
 
-def convert_number_date_distance(time_str: Annotated[str, "The time-like string to be converted"]) -> Annotated[int, "The number of days"]:
+def convert_number_date_distance(time_str: Annotated[str, Doc("The time-like string to be converted")]) -> Annotated[int, Doc("The number of days")]:
     """
     Convert a time-like string to a number of days.
 
@@ -338,7 +338,7 @@ df["departure_date_distance"] = df["departure_date_distance"].apply(
 # function to convert time to minutes
 
 
-def times_to_minute(time_obj: Annotated[datetime, "The time object to be converted"]) -> Annotated[int, "The number of minutes"]:
+def times_to_minute(time_obj: Annotated[datetime, Doc("The time object to be converted")]) -> Annotated[int, Doc("The number of minutes")]:
     """
     Convert a time object to the number of minutes.
 
@@ -472,7 +472,7 @@ df.describe()
 # detect outliers function by using IQR method
 
 
-def detect_outliers(df: Annotated[pd.DataFrame, "The DataFrame to be detected"], cols: Annotated[list[str], "The columns to be detected"]) -> dict:
+def detect_outliers(df: Annotated[pd.DataFrame, Doc("The DataFrame to be detected")], cols: Annotated[list[str], Doc("The columns to be detected")]) -> dict:
     """
     Detect outliers in specified columns of the DataFrame using the IQR method.
 
@@ -510,7 +510,7 @@ def detect_outliers(df: Annotated[pd.DataFrame, "The DataFrame to be detected"],
 
 # %%
 # boxplot to visualize outliers
-def plot_boxplots(df: Annotated[pd.DataFrame, "The DataFrame to be plotted"], columns: Annotated[list[str], "The columns to be plotted"]) -> None:
+def plot_boxplots(df: Annotated[pd.DataFrame, Doc("The DataFrame to be plotted")], columns: Annotated[list[str], Doc("The columns to be plotted")]) -> None:
     """
     Plot boxplots for specified columns in the DataFrame.
 
@@ -975,13 +975,13 @@ X_test_preprocessed_cl = pd.concat(
 # Function to calculate p-values and perform stepwise regression
 
 
-def stepwise_regression(X: Annotated[pd.DataFrame, "Training data"],
-                        y: Annotated[pd.Series, "Target variable"],
-                        significance_level_in: Annotated[float,
-                                                         "Significance level for entering"] = 0.05,
-                        significance_level_out: Annotated[float,
-                                                          "Significance level for removing"] = 0.05
-                        ) -> Annotated[list, "List of selected features"]:
+def stepwise_regression(X: Annotated[pd.DataFrame, Doc("Training data")],
+                        y: Annotated[pd.Series, Doc("Target variable")],
+                        significance_level_in: Annotated[float, Doc(
+                            "Significance level for entering")] = 0.05,
+                        significance_level_out: Annotated[float, Doc(
+                            "Significance level for removing")] = 0.05
+                        ) -> Annotated[list, Doc("List of selected features")]:
     """
     Perform stepwise regression to select features for the regression model.
 
@@ -1218,11 +1218,11 @@ ClassificationModel = Union[RandomForestClassifier]
 # function to call the model with numeric scorer (evaluation metric)
 
 
-def model_train(model_name: Annotated[RegressionModel, "Model instance"],
-                X_train: Annotated[pd.DataFrame, "Training data"],
-                X_test: Annotated[pd.DataFrame, "Testing data"],
-                y_train: Annotated[pd.Series, "Training target"],
-                y_test: Annotated[pd.Series, "Testing target"]
+def model_train(model_name: Annotated[RegressionModel, Doc("Model instance")],
+                X_train: Annotated[pd.DataFrame, Doc("Training data")],
+                X_test: Annotated[pd.DataFrame, Doc("Testing data")],
+                y_train: Annotated[pd.Series, Doc("Training target")],
+                y_test: Annotated[pd.Series, Doc("Testing target")]
                 ) -> None:
     """
     Train a model and print evaluation metrics.
@@ -1278,11 +1278,12 @@ def model_train(model_name: Annotated[RegressionModel, "Model instance"],
 
 # %%
 # function to call the classification model (evaluation metric)
-def model_train_classification(model_name: Annotated[ClassificationModel, "Model instance"],
-                               X_train: Annotated[pd.DataFrame, "Training data"],
-                               X_test: Annotated[pd.DataFrame, "Testing data"],
-                               y_train: Annotated[pd.Series, "Training target"],
-                               y_test: Annotated[pd.Series, "Testing target"]
+def model_train_classification(model_name: Annotated[ClassificationModel, Doc("Model instance")],
+                               X_train: Annotated[pd.DataFrame, Doc("Training data")],
+                               X_test: Annotated[pd.DataFrame, Doc("Testing data")],
+                               y_train: Annotated[pd.Series, Doc("Training target")],
+                               y_test: Annotated[pd.Series,
+                                                 Doc("Testing target")]
                                ) -> None:
     """
     Train a model and print evaluation metrics.
