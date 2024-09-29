@@ -16,8 +16,8 @@ Our goal is to develop accurate models for predicting flight prices and gain ins
 
 The notebook covers the following steps:
 
-1. Data loading and exploration
-2. Data preprocessing and feature engineering
+1. Data loading and exploration 
+2. Data preprocessing ( data clean, feature engineering, scaling, encoding, feature selection)
 3. Model training and evaluation
 4. Hyperparameter tuning
 5. Model comparison and interpretation
