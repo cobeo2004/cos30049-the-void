@@ -217,6 +217,10 @@ print(df.head(5))
 # Remove null values and duplicates
 df = df.dropna().drop_duplicates()
 
+#strip whitespace from string column 
+object_column = df.select_dtypes(include="object").columns
+df[object_column] = df[object_column].apply(lambda x: x.str.strip())
+
 # Convert price to float
 df["price (€)"] = df["price (€)"].str.replace(",", "").str.replace("€", "").str.strip().astype(float)
 df.rename(columns={'price (€)': 'price'}, inplace=True)
@@ -236,6 +240,10 @@ def standardize_time(time_str):
 df["arrival_time"] = df["arrival_time"].apply(standardize_time)
 df["departure_time"] = df["departure_time"].apply(standardize_time)
 
+#convert arrival_time and departure_time to datetime datatype
+df["arrival_time"] = pd.to_datetime(df["arrival_time"], format='%H:%M').dt.time
+df["departure_time"] = pd.to_datetime(df["departure_time"], format='%H:%M').dt.time
+
 # Convert departure_date_distance
 def convert_number_date_distance(time_str):
     # Implementation of convert_number_date_distance function
@@ -253,6 +261,7 @@ def times_to_minute (time_obj):
    pass
 # Create new features
 df["flight_duration_in_minutes"] = df["arrival_time"].apply(times_to_minute) - df["departure_time"].apply(times_to_minute)
+df.loc[(df['flight_duration_in_minutes'] < 150) & (df['stops'] != 0), 'flight_duration_in_minutes'] = (1440 - df['departure_time'].apply(times_to_minute)) + df['arrival_time'].apply(times_to_minute)
 df["departure_time_in_minutes_from_midnight"] = df["departure_time"].apply(times_to_minute)
 df["day_of_week"] = df["departure_date"].dt.weekday
 df["day_of_month"] = df["departure_date"].dt.day
@@ -268,12 +277,24 @@ df.drop(columns=["scrape_date", "departure_time", "arrival_time", "departure_dat
 
 ### Step 4: Handle Outliers
 - Use IQR method to detect outliers
+```python
+def detect_outliers(df, cols) -> dict:
+    outliers: dict = {}
+    for col in cols:
+        Q1 = df[col].quantile(0.25)  # 1st quartile
+        Q3 = df[col].quantile(0.75)  # 3rd quartile
+        IQR = Q3 - Q1  # interquartile range
+        lower_bound = Q1 - 1.5 * IQR  # lower bound
+        upper_bound = Q3 + 1.5 * IQR  # upper bound
+        outliers[col] = df.loc[(df[col] < lower_bound) | (df[col] > upper_bound)].shape[0]  #count of outliers in each column (column: count of rows)
+    return outliers
+```
 - Use capping method to handle outliers
 ```python
-lower_bound = df[col].quantile(0.01)  # 1st percentile
-upper_bound = df[col].quantile(0.99)  # 99th percentile
-df[col] = df[col].clip(lower_bound, upper_bound)
-
+for col in numerical_cols:
+    lower_bound = df[col].quantile(0.01)  # 1st percentile
+    upper_bound = df[col].quantile(0.99)  # 99th percentile
+    df[col] = df[col].clip(lower_bound, upper_bound)
 ```
 
 ### Step 5: Feature Selection
