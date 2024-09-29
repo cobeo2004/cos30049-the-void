@@ -175,6 +175,23 @@ from sklearn.metrics import mean_squared_error
 mse = mean_squared_error(y_test, y_pred)
 print(f'Mean Squared Error: {mse}')
 
+### USING THE MODEL FOR PREDICTION
+Once the model has been trained and evaluated, you can use it to predict flight prices for new data. Here is a step-by-step guide to using the model for predictions.
+
+### Step 1: Prepare the Input Data for Prediction
+Make sure that any new input data for prediction is preprocessed in the same way as the training data. This includes applying any categorical encoding and removing irrelevant columns.
+
+### Step 2: Use the Trained Model to Make Predictions
+Once the new data is preprocessed, you can use the trained model (rf_regressor) to make predictions on this data.
+# Load new flight data for prediction
+new_data = pd.read_csv('new_flight_data.csv')
+
+# Predict flight prices for the new data
+predictions = rf_regressor.predict(new_data)
+
+# Display the predictions
+print(predictions)
+
 ### MAKING PREDICTIONS
 Once the model has been trained and evaluated, you can use it to predict flight prices for new data.
 
