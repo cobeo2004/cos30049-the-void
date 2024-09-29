@@ -1014,11 +1014,14 @@ def stepwise_regression(X: Annotated[pd.DataFrame, Doc("Training data")],
         excluded = list(set(X.columns) - set(included))
         new_pval = pd.Series(index=excluded)
         for new_column in excluded:
+            # Fit OLS model with current features plus new feature
             model = sm.OLS(y, sm.add_constant(
                 X[included + [new_column]])).fit()
+            # Store p-value of new feature
             new_pval[new_column] = model.pvalues[new_column]
         best_pval = new_pval.min()
 
+        # If best p-value is below threshold, add the feature
         if best_pval < significance_level_in:
             best_feature = new_pval.idxmin()
             included.append(best_feature)
@@ -1031,6 +1034,7 @@ def stepwise_regression(X: Annotated[pd.DataFrame, Doc("Training data")],
         pvalues = model.pvalues.iloc[1:]  # Exclude constant
         worst_pval = pvalues.max()
 
+        # If worst p-value is above threshold, remove the feature
         if worst_pval > significance_level_out:
             worst_feature = pvalues.idxmax()
             included.remove(worst_feature)
@@ -1038,6 +1042,7 @@ def stepwise_regression(X: Annotated[pd.DataFrame, Doc("Training data")],
             print(
                 f"Removing feature '{worst_feature}' with p-value {worst_pval:.4f}")
 
+        # If no changes were made, exit the loop
         if not changed:
             break
 
@@ -1049,20 +1054,26 @@ def stepwise_regression(X: Annotated[pd.DataFrame, Doc("Training data")],
 
 # %%
 # Add a constant term to the features (required for statsmodels OLS)
+# This is necessary for the intercept term in the regression model
 X_train_with_const_rg = sm.add_constant(X_train_preprocessed_rg)
 
-# Perform stepwise regression
+# Perform stepwise regression to select the most significant features
+# This process will iteratively add and remove features based on their statistical significance
 final_features_rg = stepwise_regression(X_train_preprocessed_rg, y_train_rg)
 
-# Print final features after stepwise regression
+# Print the final features that were selected after stepwise regression
+# This helps us understand which features were deemed most important for the model
 print("\nFinal features after stepwise regression:")
 print(final_features_rg)
 
-# Prepare final datasets for modeling
+# Prepare final datasets for modeling using only the selected features
+# This ensures we're using the most relevant features for our regression model
 X_train_final_rg = X_train_preprocessed_rg[final_features_rg]
 X_test_final_rg = X_test_preprocessed_rg[final_features_rg]
 
-# Final data frame for regression
+# Create the final data frame for regression
+# This combines the training and test sets, including both features and target variable
+# The resulting dataframe will be used for further analysis and model evaluation
 df_regression = pd.concat([pd.concat([X_train_final_rg, y_train_rg], axis=1), pd.concat(
     [X_test_final_rg, y_test_rg], axis=1)], axis=0)
 
@@ -1194,6 +1205,7 @@ for model in models:
 # %%
 # Strict typing for model name
 RegressionModel = Union[RandomForestRegressor, GradientBoostingRegressor]
+
 ClassificationModel = Union[RandomForestClassifier]
 
 # %% [markdown]
@@ -1224,7 +1236,7 @@ ClassificationModel = Union[RandomForestClassifier]
 #
 
 # %%
-# function to call the model with numeric scorer (evaluation metric)
+# Function to train and evaluate regression models with numeric evaluation metrics
 
 
 def model_train(model_name: Annotated[RegressionModel, Doc("Model instance")],
@@ -1234,27 +1246,39 @@ def model_train(model_name: Annotated[RegressionModel, Doc("Model instance")],
                 y_test: Annotated[pd.Series, Doc("Testing target")]
                 ) -> None:
     """
-    Train a model and print evaluation metrics.
+    Train a regression model and print various evaluation metrics.
 
     Parameters:
-    - model_name (RandomForestRegressor | GradientBoostingRegressor): Model instance.
-    - X_train (pd.DataFrame): Training data.
-    - X_test (pd.DataFrame): Testing data.
-    - y_train (pd.Series): Training target.
-    - y_test (pd.Series): Testing target.
+    - model_name (RandomForestRegressor | GradientBoostingRegressor): Instance of the regression model to be trained.
+    - X_train (pd.DataFrame): Features of the training data.
+    - X_test (pd.DataFrame): Features of the testing data.
+    - y_train (pd.Series): Target values of the training data.
+    - y_test (pd.Series): Target values of the testing data.
 
     Returns:
-    - None
+    - None (prints evaluation metrics)
     """
+    # Print the name of the regression model being used
     print(f" Regression Model: {model_name}")
-    # fit the training data into model
+
+    # Fit the model on the training data
     model = model_name.fit(X_train, y_train)
-    # print training score
+
+    # Calculate and print the training score (R^2 score on training data)
     print(f"Training Score: {model.score(X_train, y_train)}")
-    print(f"Test Score: {model.score(X_test, y_test)}")  # print test score
-    predict_value = model.predict(X_test)  # predict the result of the test set
+
+    # Calculate and print the test score (R^2 score on test data)
+    print(f"Test Score: {model.score(X_test, y_test)}")
+
+    # Make predictions on the test set
+    predict_value = model.predict(X_test)
+
+    # Calculate and print various evaluation metrics
+    # Coefficient of determination
     print(f"R^2 Score: {r2_score(y_test, predict_value)}")
+    # Average squared difference between predicted and actual values
     print(f"Mean Square Error: {mean_squared_error(y_test, predict_value)}")
+    # Average absolute difference between predicted and actual values
     print(f"Mean Absolute Error: {mean_absolute_error(y_test, predict_value)}")
 
 
@@ -1286,7 +1310,7 @@ def model_train(model_name: Annotated[RegressionModel, Doc("Model instance")],
 #
 
 # %%
-# function to call the classification model (evaluation metric)
+# Function to train and evaluate classification models
 def model_train_classification(model_name: Annotated[ClassificationModel, Doc("Model instance")],
                                X_train: Annotated[pd.DataFrame, Doc("Training data")],
                                X_test: Annotated[pd.DataFrame, Doc("Testing data")],
@@ -1295,27 +1319,44 @@ def model_train_classification(model_name: Annotated[ClassificationModel, Doc("M
                                                  Doc("Testing target")]
                                ) -> None:
     """
-    Train a model and print evaluation metrics.
+    Train a classification model and print various evaluation metrics.
 
     Parameters:
-    - model_name (RandomForestClassifier): Model instance.
-    - X_train (pd.DataFrame): Training data.
-    - X_test (pd.DataFrame): Testing data.
-    - y_train (pd.Series): Training target.
-    - y_test (pd.Series): Testing target.
+    - model_name (ClassificationModel): Instance of the classification model to be trained.
+    - X_train (pd.DataFrame): Features of the training data.
+    - X_test (pd.DataFrame): Features of the testing data.
+    - y_train (pd.Series): Target values of the training data.
+    - y_test (pd.Series): Target values of the testing data.
 
     Returns:
-    - None
+    - None: This function doesn't return any value, it prints the evaluation metrics.
     """
 
-    # fit the training data into model
+    # Fit the model on the training data
     model = model_name.fit(X_train, y_train)
-    predict_value = model.predict(X_test)  # predict the result of the test set
+
+    # Use the trained model to make predictions on the test set
+    predict_value = model.predict(X_test)
+
+    # Calculate and print various evaluation metrics
+
+    # Accuracy: The proportion of correct predictions (both true positives and true negatives) among the total number of cases examined
     print(f"Accuracy: {accuracy_score(y_test, predict_value)}")
+
+    # Precision: The ratio of correctly predicted positive observations to the total predicted positive observations
+    # Using weighted average for multi-class problems
     print(
         f"Precision: {precision_score(y_test, predict_value, average='weighted')}")
+
+    # Recall: The ratio of correctly predicted positive observations to all observations in actual class
+    # Using weighted average for multi-class problems
     print(f"Recall: {recall_score(y_test, predict_value, average='weighted')}")
+
+    # F1 Score: The weighted average of Precision and Recall
+    # Using weighted average for multi-class problems
     print(f"F1 Score: {f1_score(y_test, predict_value, average='weighted')}")
+
+    # Confusion Matrix: A table used to describe the performance of a classification model on a set of test data for which the true values are known
     print(f"Confusion Matrix:\n{confusion_matrix(y_test, predict_value)}")
 
 # %% [markdown]
@@ -1325,6 +1366,7 @@ def model_train_classification(model_name: Annotated[ClassificationModel, Doc("M
 # %%
 # Random Forest (for predict numerical value)
 model1 = RandomForestRegressor(random_state=9214)
+# Train the model
 model_train(model1, X_train_final_rg, X_test_final_rg, y_train_rg, y_test_rg)
 
 # %% [markdown]
@@ -1333,6 +1375,7 @@ model_train(model1, X_train_final_rg, X_test_final_rg, y_train_rg, y_test_rg)
 # %%
 # Gradient Boosting Regressor
 model2 = GradientBoostingRegressor(random_state=9214)
+# Train the model
 model_train(model2, X_train_final_rg, X_test_final_rg, y_train_rg, y_test_rg)
 
 # %% [markdown]
@@ -1341,6 +1384,7 @@ model_train(model2, X_train_final_rg, X_test_final_rg, y_train_rg, y_test_rg)
 # %%
 # Random Forest Classifier
 model3 = RandomForestClassifier(random_state=9214)
+# Train the model
 model_train_classification(model3, X_train_final_cl,
                            X_test_final_cl, z_train_cl, z_test_cl)
 
@@ -1348,8 +1392,9 @@ model_train_classification(model3, X_train_final_cl,
 # ## Validate **regression model**
 
 # %%
-# the data use to train the regression model also use to validation (should be the whole data not the splitted data because will use kfold to valid the model)
+# The data use to train the regression model also use to validation (should be the whole data not the splitted data because will use kfold to valid the model)
 X_cross_val_rg = df_regression.drop(columns=['price'], axis=1)
+# Get the target variable
 y_cross_val_rg = df_regression['price']
 
 # %%
@@ -1372,10 +1417,15 @@ X_cross_val_cl = df_classification.drop(columns=['price_category'], axis=1)
 y_cross_val_cl = df_classification['price_category']
 
 # %%
-# validation for the classification model
-models = [model3]  # list of models
+# Validation for the classification model
+# List of models to evaluate
+models = [model3]
 
-# Define the metrics you want to use
+# Define metrics for evaluation
+# Accuracy: Proportion of correct predictions
+# Precision: Ratio of true positives to all positive predictions
+# Recall: Ratio of true positives to all actual positives
+# F1 Score: Harmonic mean of precision and recall
 metrics = {
     'Accuracy': accuracy_score,
     'Precision': lambda y_true, y_pred: precision_score(y_true, y_pred, average='weighted'),
@@ -1383,12 +1433,14 @@ metrics = {
     'F1 Score': lambda y_true, y_pred: f1_score(y_true, y_pred, average='weighted')
 }
 
-# Perform cross-validation for each model
+# Perform 5-fold cross-validation for each model
 for i, model in enumerate(models, 1):
     print(f"\nModel {i}:")
     for metric_name, metric_func in metrics.items():
+        # Calculate cross-validation scores
         scores = cross_val_score(
             model, X_cross_val_cl, y_cross_val_cl, cv=5, scoring=make_scorer(metric_func))
+        # Print results for each metric
         print(f"{metric_name}:")
         print(f"  Scores: {scores}")
         print(f"  Mean: {scores.mean():.4f}")
@@ -1455,7 +1507,7 @@ def custom_score(estimator, X, y):
 # Create a random forest regressor
 rf = RandomForestRegressor(random_state=9214)
 
-# Set up the Grid search
+# Set up the Random search
 ran_search = RandomizedSearchCV(
     estimator=rf,
     param_distributions=param_grid,
@@ -1466,7 +1518,7 @@ ran_search = RandomizedSearchCV(
     scoring=custom_score
 )
 
-# Fit the Grid search
+# Fit the random search
 ran_search.fit(X_train_final_rg, y_train_rg)
 
 # Print the best parameters and score
@@ -1477,8 +1529,7 @@ print("Best score:", ran_search.best_score_)
 # ### Predict and display the **Mean Squared Error**, **Mean Absolute Error** and **R-squared** score for the Hyper-parameter tuned
 
 # %%
-
-# Create a new model with the best parameters
+# Create a new model with the best parameters from the random search
 best_rf = RandomForestRegressor(**ran_search.best_params_, random_state=9214)
 
 # Fit the model to the training data
@@ -1487,11 +1538,12 @@ best_rf.fit(X_train_final_rg, y_train_rg)
 # Make predictions on the test set
 y_pred = best_rf.predict(X_test_final_rg)
 
-# Calculate MSE and R^2 score
+# Calculate evaluation metrics
 mse = mean_squared_error(y_test_rg, y_pred)
 r2 = r2_score(y_test_rg, y_pred)
 mbe = mean_absolute_error(y_test_rg, y_pred)
 
+# Print the evaluation metrics
 print(f"Mean Squared Error: {mse}")
 print(f"Mean Absolute Error: {mbe}")
 print(f"R^2 Score: {r2}")
@@ -1515,10 +1567,17 @@ print(f"Training Score: {best_rf.score(X_train_final_rg, y_train_rg)}")
 # ### Display the **Cross-validation scores**, **Mean CV Score** and **Standard devitation of CV score** for the Hyper-parameter tuned model
 
 # %%
+# Perform cross-validation on the best Random Forest model
 cv_val = cross_val_score(best_rf, X_cross_val_rg,
                          y_cross_val_rg, cv=5, scoring='r2')
+
+# Print the cross-validation scores
 print(f"Cross-validation scores: {cv_val}")
+
+# Print the mean cross-validation score
 print(f" Mean CV score: {cv_val.mean():.4f}")
+
+# Print the standard deviation of the cross-validation scores
 print(f"Standard deviation of CV score: {cv_val.std():.4f}")
 
 # %% [markdown]
@@ -1600,33 +1659,53 @@ print("Best score:", grid_search.best_score_)
 # ### Predict and display the **Mean Squared Error**, **Mean Absolute Error** and **R-squared** score for the Hyper-parameter tuned
 
 # %%
-
-# Create a new model with the best parameters
+# Create a new Gradient Boosting Regressor model with the best parameters found from grid search
 best_gb = GradientBoostingRegressor(
     **grid_search.best_params_, random_state=9214)
 
 # Fit the model to the training data
+# This trains the model on our prepared training dataset
 best_gb.fit(X_train_final_rg, y_train_rg)
 
 # Make predictions on the test set
+# We use the trained model to predict prices for our test data
 y_pred = best_gb.predict(X_test_final_rg)
 
-# Calculate MSE and R^2 score
+# Calculate various performance metrics
+# Mean Squared Error (MSE): Average squared difference between predicted and actual values
 mse = mean_squared_error(y_test_rg, y_pred)
-r2 = r2_score(y_test_rg, y_pred)
-mbe = mean_absolute_error(y_test_rg, y_pred)
 
+# R-squared (R2) Score: Proportion of variance in dependent variable predictable from independent variable(s)
+r2 = r2_score(y_test_rg, y_pred)
+
+# Mean Absolute Error (MAE): Average absolute difference between predicted and actual values
+mae = mean_absolute_error(y_test_rg, y_pred)
+
+# Print out the performance metrics
 print(f"Mean Squared Error: {mse}")
-print(f"Mean Absolute Error: {mbe}")
+print(f"Mean Absolute Error: {mae}")
 print(f"R^2 Score: {r2}")
+
+# Calculate and print the training score
+# This shows how well the model fits the training data, which can be used to check for overfitting
 print(f"Training Score: {best_gb.score(X_train_final_rg, y_train_rg)}")
 
 # %% [markdown]
 # ### Display the **Cross-validation scores**, **Mean CV Score** and **Standard devitation of CV score** for the Hyper-parameter tuned model
 
 # %%
+# Perform 5-fold cross-validation using the best Gradient Boosting model
+# This helps assess how well the model generalizes to unseen data
 cv_val = cross_val_score(best_gb, X_cross_val_rg,
                          y_cross_val_rg, cv=5, scoring='r2')
+
+# Print the individual cross-validation scores for each fold
 print(f"Cross-validation scores: {cv_val}")
-print(f" Mean CV score: {cv_val.mean():.4f}")
+
+# Calculate and print the mean cross-validation score
+# This gives us an overall measure of the model's performance across all folds
+print(f"Mean CV score: {cv_val.mean():.4f}")
+
+# Calculate and print the standard deviation of the cross-validation scores
+# This indicates how consistent the model's performance is across different folds
 print(f"Standard deviation of CV score: {cv_val.std():.4f}")
