@@ -5,8 +5,7 @@ from typing_extensions import Annotated, Doc
 from functools import wraps
 
 # Context variable to store the Prisma client for the current async context
-__context__: ContextVar[Optional[Prisma]
-                        ] = ContextVar("prisma", default=None)
+__context__: ContextVar[Optional[Prisma]] = ContextVar("prisma", default=None)
 
 
 def __get_prisma__() -> Prisma:
