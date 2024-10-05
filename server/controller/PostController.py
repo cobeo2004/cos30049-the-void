@@ -5,14 +5,12 @@ from typing_extensions import Annotated, Doc
 
 
 class Controller:
-    def __init__(self) -> None:
-        pass
 
     async def get_posts(self, db: Annotated[Prisma, Doc("The Prisma client instance")]):
         return await db.post.find_many()
 
     async def get_post(self, item_id: int, db: Annotated[Prisma, Doc("The Prisma client instance")]):
-        return await db.post.find_unique(where={
+        return await self.db.post.find_unique(where={
             "id": item_id
         })
 
