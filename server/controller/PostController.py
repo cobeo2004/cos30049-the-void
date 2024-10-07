@@ -10,7 +10,7 @@ class Controller:
         return await db.post.find_many()
 
     async def get_post(self, item_id: int, db: Annotated[Prisma, Doc("The Prisma client instance")]):
-        return await self.db.post.find_unique(where={
+        return await db.post.find_unique(where={
             "id": item_id
         })
 
