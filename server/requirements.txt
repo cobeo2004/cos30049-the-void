@@ -1,3 +1,6 @@
-fastapi
+fastapi[standard]
 uvicorn
 prisma
+passlib[bcrypt]
+python-jose
+python-dotenv

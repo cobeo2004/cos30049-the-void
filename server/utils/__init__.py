@@ -1,4 +1,6 @@
 from .logger import *
 from .exceptions import *
+from .dotEnv import *
+from .auth import *
 
-__all__ = ["logger", "LoggingMiddleware", "ExceptionHandlerMiddleware"]
+__all__ = ["logger", "exceptions", "dotEnv", "auth"]
