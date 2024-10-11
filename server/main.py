@@ -3,8 +3,8 @@ from routers import user_router, prediction_router
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from context import FastAPILifespan
-from lib.logger.middleware import LoggingMiddleware
-from lib.logger import logger
+from utils.logger.middleware import LoggingMiddleware
+from utils.logger import logger
 
 app = FastAPI(lifespan=FastAPILifespan)
 app.add_middleware(

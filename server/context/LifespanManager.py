@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from .PrismaWrapper import __get_prisma__
 from prisma import Prisma
-from lib.logger import logger
+from utils.logger import logger
 __prisma_singleton__ = Prisma()
 
 
