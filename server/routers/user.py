@@ -3,30 +3,30 @@ from fastapi import APIRouter, Depends
 from controller import PostController
 from prisma.partials import PostAllFields
 from context import PrismaSingleton
-
+from utils.auth import get_current_user_id
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(get_current_user_id)])
 async def read_posts(controller: PostController = Depends(PostController)):
     return await controller.get_posts(PrismaSingleton)
 
 
-@router.get("/{item_id}")
+@router.get("/{item_id}", dependencies=[Depends(get_current_user_id)])
 async def read_post_by_id(
     item_id: int, controller: PostController = Depends(PostController)
 ):
     return await controller.get_post(item_id, PrismaSingleton)
 
 
-@router.post("")
+@router.post("", dependencies=[Depends(get_current_user_id)])
 async def append_post(
     model: PostAllFields, controller: PostController = Depends(PostController)
 ):
     return await controller.add_post(model, PrismaSingleton)
 
 
-@router.put("/{item_id}")
+@router.put("/{item_id}", dependencies=[Depends(get_current_user_id)])
 async def update_post(
     item_id: int,
     model: PostAllFields,
@@ -35,7 +35,7 @@ async def update_post(
     return await controller.update_post(item_id, model, PrismaSingleton)
 
 
-@router.delete("/{item_id}")
+@router.delete("/{item_id}", dependencies=[Depends(get_current_user_id)])
 async def delete_post(
     item_id: int, controller: PostController = Depends(PostController)
 ):
