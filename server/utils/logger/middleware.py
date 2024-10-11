@@ -1,15 +1,16 @@
 import time
 import uuid
-from fastapi import FastAPI, Request
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
 from typing import Callable
 from .config import __loggerSingleton__
 
 
-class LoggingMiddleware:
+class LoggingMiddleware(BaseHTTPMiddleware):
     # def __init__(self, app: FastAPI):
     #     self.app = app
 
-    async def __call__(self, request: Request, call_next: Callable):
+    async def dispatch(self, request: Request, call_next: Callable):
         request_id = str(uuid.uuid4())
         request.state.request_id = request_id
 
