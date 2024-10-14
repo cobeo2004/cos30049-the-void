@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from .PrismaWrapper import __get_prisma__
 from prisma import Prisma
 from utils.logger import logger
-__prisma_singleton__ = Prisma()
+__prisma_singleton__: Prisma | None = Prisma()
 
 
 @asynccontextmanager

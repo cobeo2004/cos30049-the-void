@@ -15,14 +15,14 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def sign_up(
     model: UserForSignUp, controller: AuthController = Depends(AuthController)
 ):
-    return await controller.signUp(model, PrismaSingleton)
+    return await controller.signUp(model)
 
 
 @router.post("/signIn", response_model=AuthReturnModel)
 async def sign_in(
     model: UserForAuth, controller: AuthController = Depends(AuthController)
 ):
-    return await controller.signIn(model, PrismaSingleton)
+    return await controller.signIn(model)
 
 
 @router.get("/me", response_model=UserAllFields)

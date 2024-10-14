@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from context import FastAPILifespan
 from utils.exceptions import ExceptionHandlerMiddleware
 from utils.logger import logger, LoggingMiddleware
-from utils.dotEnv import EnvironmentVariables
 from routers import auth_router
 
 app = FastAPI(lifespan=FastAPILifespan)
@@ -27,8 +26,6 @@ app.add_middleware(LoggingMiddleware)
 # Exception Handling Middleware
 app.add_middleware(ExceptionHandlerMiddleware)
 
-logger.info(EnvironmentVariables())
-
 
 @app.get("/")
 def read_root():
@@ -39,3 +36,13 @@ def read_root():
 app.include_router(user_router)
 app.include_router(prediction_router)
 app.include_router(auth_router)
+
+
+def bootstrap():
+    import uvicorn
+
+    uvicorn.run("main:app", host="localhost", port=8000, reload=True)
+
+
+if __name__ == "__main__":
+    bootstrap()

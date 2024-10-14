@@ -1,24 +1,27 @@
 from prisma import Prisma
 from prisma.partials import PostAllFields
 from typing_extensions import Annotated, Doc
+from context import PrismaSingleton
 
 
 class Controller:
 
-    async def get_posts(self, db: Annotated[Prisma, Doc("The Prisma client instance")]):
-        return await db.post.find_many()
+    def __init__(self):
+        self.db = PrismaSingleton
+
+    async def get_posts(self):
+        return await self.db.post.find_many()
 
     async def get_post(
-        self, item_id: int, db: Annotated[Prisma, Doc("The Prisma client instance")]
+        self, item_id: int
     ):
-        return await db.post.find_unique(where={"id": item_id})
+        return await self.db.post.find_unique(where={"id": item_id})
 
     async def add_post(
         self,
         model: Annotated[PostAllFields, Doc("The Post Model")],
-        db: Annotated[Prisma, Doc("The Prisma client instance")],
     ):
-        return await db.post.create(
+        return await self.db.post.create(
             {
                 "content": model.content,
                 "title": model.title,
@@ -29,17 +32,15 @@ class Controller:
     async def delete_post(
         self,
         item_id: Annotated[int, Doc("The id to be delete")],
-        db: Annotated[Prisma, Doc("The Prisma client instance")],
     ):
-        return await db.post.delete(where={"id": item_id})
+        return await self.db.post.delete(where={"id": item_id})
 
     async def update_post(
         self,
         item_id: Annotated[int, Doc("The id to be update")],
         model: Annotated[PostAllFields, Doc("The new updated model")],
-        db: Prisma,
     ):
-        return await db.post.update(
+        return await self.db.post.update(
             {
                 "content": model.content,
                 "title": model.title,

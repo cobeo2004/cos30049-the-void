@@ -1,5 +1,5 @@
+from typing_extensions import Annotated, Doc
 from fastapi import HTTPException, status
-from prisma import Prisma
 from prisma.partials import UserForSignUp, UserForAuth, UserAllFields
 from utils.auth import (
     hash_password,
@@ -10,17 +10,25 @@ from utils.auth import (
 )
 from utils import logger
 from models import AuthReturnModel, RefreshTokenModel
+from context import PrismaSingleton
 
 
 class Controller:
 
-    async def refreshToken(self, refresh_token: str, id: str, db: Prisma) -> RefreshTokenModel:
+    def __init__(self):
+        self.db = PrismaSingleton
+
+    async def refreshToken(
+        self,
+        refresh_token: Annotated[str, Doc("The refresh token")],
+        id: Annotated[str, Doc("The id of the user")],
+    ) -> RefreshTokenModel:
         payload = verify_refresh_token(refresh_token)
         if not payload or payload["sub"] != id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
             )
-        user = await db.user.find_unique(where={"id": id})
+        user = await self.db.user.find_unique(where={"id": id})
         if not user:
             logger.error(f"User not found: {id}")
             raise HTTPException(
@@ -28,8 +36,11 @@ class Controller:
             )
         return RefreshTokenModel(refresh_token=create_access_token(user))
 
-    async def getMe(self, id: str, db: Prisma) -> UserAllFields | None:
-        user = await db.user.find_unique(where={"id": id})
+    async def getMe(
+        self,
+        id: Annotated[str, Doc("The user id")],
+    ) -> UserAllFields | None:
+        user = await self.db.user.find_unique(where={"id": id})
         if not user:
             logger.error(f"User not found: {id}")
             raise HTTPException(
@@ -37,7 +48,14 @@ class Controller:
             )
         return user.model_dump()
 
-    async def signUp(self, user: UserForSignUp, db: Prisma) -> AuthReturnModel:
+    async def signUp(
+        self,
+        user: Annotated[
+            UserForSignUp,
+            Doc("The auto-generated schema for signing up user by Prisma"),
+        ],
+    ) -> AuthReturnModel:
+
         if not user.email or not user.username or not user.password:
             logger.error(f"Email, username and password are required: {user}")
             raise HTTPException(
@@ -45,7 +63,7 @@ class Controller:
                 detail="Email, username and password are required",
             )
 
-        user_exists = await db.user.find_first(
+        user_exists = await self.db.user.find_first(
             where={"OR": [{"email": user.email}, {"username": user.username}]}
         )
         if user_exists:
@@ -55,7 +73,7 @@ class Controller:
             )
 
         hashed_password = hash_password(user.password)
-        user_created = await db.user.create(
+        user_created = await self.db.user.create(
             data={**user.model_dump(exclude={"password"}), "password": hashed_password}
         )
         access_token = create_access_token(user_created)
@@ -67,14 +85,19 @@ class Controller:
         )
         return return_value
 
-    async def signIn(self, user: UserForAuth, db: Prisma):
+    async def signIn(
+        self,
+        user: Annotated[
+            UserForAuth, Doc("The auto-generated schema for signing in user by Prisma")
+        ],
+    ) -> AuthReturnModel:
         if not user.username or not user.password:
             logger.error(f"Username and password are required: {user}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username and password are required",
             )
-        found_user = await db.user.find_first(where={"username": user.username})
+        found_user = await self.db.user.find_first(where={"username": user.username})
         if not found_user:
             logger.error(f"User not found: {user}")
             raise HTTPException(
