@@ -1,8 +1,4 @@
 import logging
-from fastapi import FastAPI, Request
-from typing import Callable
-import time
-import uuid
 
 logging.basicConfig(
     level=logging.DEBUG,

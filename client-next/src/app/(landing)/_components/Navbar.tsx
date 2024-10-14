@@ -1,15 +1,16 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import Logo from "@/assets/images/image.png";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import AvatarDropdown from "./AvatarDropdown";
+import { headers } from "next/headers";
+import { getSession } from "@/server/auth/getSession";
 
-export const Navbar = () => {
-  const pathname = usePathname();
-
+export const Navbar = async () => {
+  const pathname = headers().get("x-current-path");
+  const session = await getSession();
+  console.log("Navbar session: ", session);
   return (
     <nav className="flex justify-between items-center p-4 bg-white text-black shadow-md border-b border-gray-200 posit">
       <div className="flex items-center">
@@ -51,7 +52,13 @@ export const Navbar = () => {
           </Link>
         </li>
       </ul>
-      <RainbowButton className="mr-8 w-[120px]">Login</RainbowButton>
+      {session?.user ? (
+        <AvatarDropdown user={session.user} />
+      ) : (
+        <Link href="/login">
+          <RainbowButton className="mr-8 w-[120px]">Login</RainbowButton>
+        </Link>
+      )}
     </nav>
   );
 };

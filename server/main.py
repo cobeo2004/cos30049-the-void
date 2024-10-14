@@ -27,10 +27,10 @@ app.add_middleware(LoggingMiddleware)
 app.add_middleware(ExceptionHandlerMiddleware)
 
 
-@app.get("/")
+@app.get("/ping")
 def read_root():
-    logger.info("Hello, World!")
-    return {"Hello": "World"}
+    logger.info("Ping!")
+    return {"message": "pong"}
 
 
 app.include_router(user_router)

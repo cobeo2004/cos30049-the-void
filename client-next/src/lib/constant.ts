@@ -83,3 +83,5 @@ export const products = [
     thumbnail: "/p3.png",
   },
 ];
+
+export const API_URL = process.env.NEXT_PUBLIC_API_URL;

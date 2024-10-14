@@ -22,6 +22,7 @@ async def sign_up(
 async def sign_in(
     model: UserForAuth, controller: AuthController = Depends(AuthController)
 ):
+    logger.info(f"Signing in user: {model}")
     return await controller.signIn(model)
 
 
@@ -30,7 +31,7 @@ async def me(
     user_id: str = Depends(get_current_user_id),
     controller: AuthController = Depends(AuthController),
 ):
-    return await controller.getMe(user_id, PrismaSingleton)
+    return await controller.getMe(user_id)
 
 
 @router.post("/refreshToken", response_model=RefreshTokenModel)
@@ -40,5 +41,5 @@ async def refresh_token(
     controller: AuthController = Depends(AuthController),
 ):
     return await controller.refreshToken(
-        refresh_token.refresh_token, user_id, PrismaSingleton
+        refresh_token.refresh_token, user_id
     )

@@ -2,7 +2,11 @@ from fastapi import APIRouter, Depends
 from controller import PredictionController
 from utils.auth import get_current_user_id
 
-router = APIRouter(prefix="/prediction", tags=["prediction"], dependencies=[Depends(get_current_user_id)])
+router = APIRouter(
+    prefix="/prediction",
+    tags=["prediction"],
+    dependencies=[Depends(get_current_user_id)]
+)
 
 
 @router.get("")
