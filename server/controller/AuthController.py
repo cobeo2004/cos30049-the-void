@@ -11,6 +11,7 @@ from utils.auth import (
 from utils import logger
 from models import AuthReturnModel, RefreshTokenModel
 from context import PrismaSingleton
+import re
 
 
 class Controller:
@@ -63,8 +64,30 @@ class Controller:
                 detail="Email, username and password are required",
             )
 
+        if not user.firstName or not user.lastName:
+            logger.error(f"First name and last name are required: {user}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="First name and last name are required",
+            )
+
+        if not re.match(
+            r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", user.email
+        ):
+            logger.error(f"Invalid email: {user.email}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email"
+            )
+
+        if len(user.password) < 8:
+            logger.error(f"Password must be at least 8 characters: {user}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password must be at least 8 characters",
+            )
+
         user_exists = await self.db.user.find_first(
-            where={"OR": [{"email": user.email}, {"username": user.username}]}
+            where={"AND": [{"email": user.email}, {"username": user.username}]}
         )
         if user_exists:
             logger.error(f"User already exists: {user_exists}")
@@ -97,6 +120,14 @@ class Controller:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username and password are required",
             )
+
+        if len(user.password) < 8:
+            logger.error(f"Password must be at least 8 characters: {user}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password must be at least 8 characters",
+            )
+
         found_user = await self.db.user.find_first(where={"username": user.username})
         if not found_user:
             logger.error(f"User not found: {user}")
@@ -106,7 +137,7 @@ class Controller:
         if not verify_password(user.password, found_user.password):
             logger.error(f"Invalid password: {user}")
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password"
+                status_code=status.HTTP_409_CONFLICT, detail="Invalid password"
             )
 
         return_value: AuthReturnModel = {

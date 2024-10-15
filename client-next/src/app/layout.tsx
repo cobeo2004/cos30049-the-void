@@ -3,6 +3,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { Suspense } from "react";
+import { revalidatePath } from "next/cache";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,12 +28,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  revalidatePath("/");
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <Suspense
+            fallback={
+              <div className="flex justify-center items-center h-screen">
+                <LoadingSpinner />
+              </div>
+            }
+          >
+            {children}
+          </Suspense>
+        </QueryProvider>
         <Toaster position="top-center" />
       </body>
     </html>

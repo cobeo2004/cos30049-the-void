@@ -25,25 +25,28 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { loginSchema } from "@/server/auth/schema";
+import { signupSchema } from "@/server/auth/schema";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 
-export default function Login() {
+export default function Signup() {
   const router = useRouter();
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       username: "",
+      email: "",
       password: "",
     },
   });
 
-  const loginMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof loginSchema>) => {
-      const response = await fetch("/api/auth/login", {
+  const signupMutation = useMutation({
+    mutationFn: async (values: z.infer<typeof signupSchema>) => {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         body: JSON.stringify(values),
         headers: {
@@ -56,7 +59,7 @@ export default function Login() {
       return response;
     },
     onMutate: () => {
-      toast.loading("Logging in...");
+      toast.loading("Signing up...");
     },
     onSuccess: () => {
       router.prefetch("/");
@@ -65,15 +68,15 @@ export default function Login() {
     },
     onError: () => {
       toast.dismiss();
-      toast.error("Login failed");
+      toast.error("Signup failed");
     },
     onSettled: () => {
       toast.dismiss();
     },
   });
 
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    loginMutation.mutate(values);
+  const onSubmit = (values: z.infer<typeof signupSchema>) => {
+    signupMutation.mutate(values);
   };
 
   return (
@@ -84,10 +87,10 @@ export default function Login() {
             <Link href="/" className="flex flex-col items-center">
               <Image src={logo} alt="AviAI Logo" width={150} height={150} />
             </Link>
-            Login to <span className="text-blue-500">AviAI.</span>
+            Sign up for <span className="text-blue-500">AviAI.</span>
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your email and password to access your account.
+            Create your account to get started.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -95,12 +98,55 @@ export default function Login() {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="John" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="username"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Username" {...field} />
+                      <Input type="text" placeholder="johndoe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="john@example.com"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,10 +169,12 @@ export default function Login() {
                   </FormItem>
                 )}
               />
-              {loginMutation.isError && (
+              {signupMutation.isError && (
                 <div className="flex items-center space-x-2 text-red-500">
                   <AlertCircle size={16} />
-                  <span className="text-sm">{loginMutation.error.message}</span>
+                  <span className="text-sm">
+                    {signupMutation.error.message}
+                  </span>
                 </div>
               )}
             </CardContent>
@@ -134,14 +182,14 @@ export default function Login() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loginMutation.isPending}
+                disabled={signupMutation.isPending}
               >
-                {loginMutation.isPending ? <LoadingSpinner /> : "Log in"}
+                {signupMutation.isPending ? <LoadingSpinner /> : "Sign up"}
               </Button>
               <span className="text-sm text-gray-500 pt-4">
-                Don&apos;t have an account?{" "}
-                <Link href="/signup" className="text-blue-500 hover:underline">
-                  Sign up
+                Already have an account?{" "}
+                <Link href="/login" className="text-blue-500 hover:underline">
+                  Log in
                 </Link>
               </span>
             </CardFooter>

@@ -7,10 +7,16 @@ import { useEffect, useState } from "react";
 export function useSession() {
   const [session, setSession] = useState<LoginResult | null>(null);
   useEffect(() => {
-    async function fetchSession() {
-      const session = await getSession();
-      console.log("Session fetched:", session);
-      setSession(session);
+    function fetchSession() {
+      const session = getSession();
+      session
+        .then((session) => {
+          console.log("Session fetched:", session);
+          setSession(session);
+        })
+        .catch((error) => {
+          console.error("Error fetching session:", error);
+        });
     }
     fetchSession();
   }, []);

@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Add a new header x-current-path which passes the path to downstream components
   const headers = new Headers(request.headers);
   headers.set("x-current-path", request.nextUrl.pathname);
+  // const session = await validateSession();
+  // if (session === null) {
+  //   return NextResponse.redirect(new URL("/login", request.url));
+  // }
   return NextResponse.next({ headers });
 }
 

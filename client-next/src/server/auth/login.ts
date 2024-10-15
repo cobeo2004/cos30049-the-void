@@ -6,27 +6,38 @@ import { API_URL } from "@/lib/constant";
 import { LoginResult } from "@/types";
 import { setSession } from "../session";
 import { redirect } from "next/navigation";
+// import { setSession } from "../session";
+// import { redirect } from "next/navigation";
+// import { revalidatePath } from "next/cache";
 
-type Result = {
-  isError: boolean;
-  error?: string;
-  success?: string;
-  data?: LoginResult;
-};
-
+/**
+ *
+ * @deprecated This one not in use anymore!
+ */
 export async function loginAction(
-  payload: z.infer<typeof loginSchema> | FormData
-): Promise<Result> {
+  payload: FormData | z.infer<typeof loginSchema>
+): Promise<string> {
+  let username: string, password: string;
   try {
-    let username: string, password: string;
     if (payload instanceof FormData) {
-      username = payload.get("username") as string;
-      password = payload.get("password") as string;
+      const { data, success, error } = loginSchema.safeParse({
+        username: payload.get("username"),
+        password: payload.get("password"),
+      });
+      if (!data || !success) {
+        throw new Error(error.message);
+      }
+      username = data.username;
+      password = data.password;
     } else {
       username = payload.username;
       password = payload.password;
     }
+  } catch (error) {
+    throw "Error while parsing the data: " + error;
+  }
 
+  try {
     const result = await fetch(`${API_URL}/auth/signIn`, {
       method: "POST",
       body: JSON.stringify({ username, password }),
@@ -35,14 +46,12 @@ export async function loginAction(
       },
     });
     if (result.status !== 200 || !result.ok) {
-      throw new Error(result.statusText);
-    } else {
-      const data = (await result.json()) as LoginResult;
-      console.log(data.access_token);
-      setSession(data);
-      redirect("/");
+      throw new Error(`${result.status} ${result.statusText}`);
     }
+    const data = (await result.json()) as LoginResult;
+    await setSession(data);
+    redirect("/");
   } catch (error) {
-    throw error;
+    throw "Error while logging in: " + error;
   }
 }

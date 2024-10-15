@@ -1,16 +1,14 @@
-import { Navbar } from "./_components/Navbar";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Home",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <>
-      <div className="sticky top-0 z-50">
-        <Navbar />
-      </div>
-      <div className="h-screen w-screen">{children}</div>
-    </>
-  );
+  return <>{children}</>;
 }
