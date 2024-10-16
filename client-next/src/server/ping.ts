@@ -5,6 +5,5 @@ export async function ping() {
   if (!result.ok) {
     throw new Error(result.statusText);
   }
-  await new Promise((resolve) => setTimeout(resolve, 1000));
   return result.json();
 }

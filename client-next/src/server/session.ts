@@ -40,10 +40,10 @@ export async function deleteSession() {
   cookies().delete("refresh_token");
 }
 
-export async function auth() {
+export async function auth(redirectTo?: string) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(redirectTo ?? "/login");
   }
   return session;
 }
