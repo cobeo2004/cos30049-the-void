@@ -8,5 +8,9 @@ class AuthReturnModel(BaseModel):
     refresh_token: str
 
 
-class RefreshTokenModel(BaseModel):
+class RefreshTokenInputModel(BaseModel):
+    refresh_token: str
+
+class RefreshTokenOutputModel(BaseModel):
+    access_token: str
     refresh_token: str

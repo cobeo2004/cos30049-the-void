@@ -1,10 +1,11 @@
+from typing import Any
 from fastapi import Body, Depends
 from fastapi.routing import APIRouter
 
 from controller import AuthController
 from context import PrismaSingleton
 from prisma.partials import UserForSignUp, UserForAuth, UserAllFields
-from models import AuthReturnModel, RefreshTokenModel
+from models import AuthReturnModel, RefreshTokenInputModel, RefreshTokenOutputModel
 from utils.auth import get_current_user_id
 from utils import logger
 
@@ -28,18 +29,18 @@ async def sign_in(
 
 @router.get("/me", response_model=UserAllFields)
 async def me(
-    user_id: str = Depends(get_current_user_id),
+    token: Any = Depends(get_current_user_id),
     controller: AuthController = Depends(AuthController),
 ):
-    return await controller.getMe(user_id)
+    return await controller.getMe(token["sub"])
 
 
-@router.post("/refreshToken", response_model=RefreshTokenModel)
+@router.post("/refreshToken", response_model=RefreshTokenOutputModel)
 async def refresh_token(
-    refresh_token: RefreshTokenModel,
-    user_id: str = Depends(get_current_user_id),
+    refresh_token: RefreshTokenInputModel,
+    token: Any = Depends(get_current_user_id),
     controller: AuthController = Depends(AuthController),
 ):
     return await controller.refreshToken(
-        refresh_token.refresh_token, user_id
+        refresh_token.refresh_token, token["exp"]
     )

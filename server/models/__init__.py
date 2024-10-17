@@ -1,4 +1,4 @@
 from .Post import Model as PostModel
-from .Auth import AuthReturnModel, RefreshTokenModel
+from .Auth import AuthReturnModel, RefreshTokenInputModel, RefreshTokenOutputModel
 
-__all__ = ["PostModel", "AuthReturnModel", "RefreshTokenModel"]
+__all__ = ["PostModel", "AuthReturnModel", "RefreshTokenInputModel", "RefreshTokenOutputModel"]

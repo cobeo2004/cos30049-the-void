@@ -12,6 +12,10 @@ class EnvironmentVariables:
     REFRESH_SECRET_KEY: str = os.getenv("REFRESH_SECRET_KEY")
     JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM")
     TOKEN_WILL_EXPIRES_MIN: int = int(os.getenv("TOKEN_WILL_EXPIRES_MIN"))
+    REFRESH_TOKEN_WILL_EXPIRES_DAYS: int = int(
+        os.getenv("REFRESH_TOKEN_WILL_EXPIRES_DAYS")
+    )
     TEST_ENDPOINT: str = os.getenv("TEST_ENDPOINT")
+
 
 env = EnvironmentVariables()

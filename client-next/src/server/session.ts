@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getSession } from "./auth/getSession";
 
-export async function setSession(data: LoginResult) {
-  cookies().set("access_token", data.access_token);
-  cookies().set("refresh_token", data.refresh_token);
+export async function setSession(data: Partial<LoginResult>) {
+  cookies().set("access_token", data.access_token as string);
+  cookies().set("refresh_token", data.refresh_token as string);
 }
 
 export async function validateSession(): Promise<LoginResult | null> {

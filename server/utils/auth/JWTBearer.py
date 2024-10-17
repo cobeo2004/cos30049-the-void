@@ -34,17 +34,16 @@ class JWTBearer(HTTPBearer):
         try:
             return verify_access_token(jwt_token)
         except JWTError:
-            logger.error("Invalid token or expired token.")
+            logger.error("[verify_jwt] Invalid token or expired token.")
             return False
 
 
 async def get_current_user_id(token: str = Depends(JWTBearer())) -> str | None:
     payload = verify_access_token(token)
     if not payload:
-        logger.error("Could not validate credentials")
+        logger.error("[get_current_user_id] Could not validate credentials")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
         )
-    print("Payload: ", payload)
-    return payload["sub"]
+    return payload
