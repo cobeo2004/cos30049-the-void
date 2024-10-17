@@ -3,7 +3,7 @@ import { DashboardHome } from "./_components/DashboardHome";
 import { Suspense } from "react";
 import { Navbar } from "./_components/Navbar";
 import LoadingSpinner from "@/components/ui/loading-spinner";
-export default function Home() {
+export default async function Home() {
   return (
     <>
       <Suspense

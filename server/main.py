@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from routers import user_router, prediction_router
 from fastapi.middleware.cors import CORSMiddleware
-from context import FastAPILifespan
+from context import FastAPILifespan, RateLimiter
 from utils.exceptions import ExceptionHandlerMiddleware
 from utils.logger import logger, LoggingMiddleware
 from routers import auth_router
@@ -28,7 +28,8 @@ app.add_middleware(ExceptionHandlerMiddleware)
 
 
 @app.get("/ping")
-def read_root():
+@RateLimiter(max_calls=10, cooldown_time=60)
+async def read_root(req: Request):
     logger.info("Ping!")
     return {"message": "pong"}
 

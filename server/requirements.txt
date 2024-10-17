@@ -4,3 +4,5 @@ prisma
 passlib[bcrypt]
 python-jose
 python-dotenv
+fastapi-limiter
+pytest
