@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
+from pydantic import BaseModel
 from routers import user_router, prediction_router
 from fastapi.middleware.cors import CORSMiddleware
 from context import FastAPILifespan, RateLimiter
@@ -20,6 +21,10 @@ app.add_middleware(
     allow_headers=headers,
 )
 
+class PingModel(BaseModel):
+    message: str
+
+
 # Logging Middleware
 app.add_middleware(LoggingMiddleware)
 
@@ -27,11 +32,11 @@ app.add_middleware(LoggingMiddleware)
 app.add_middleware(ExceptionHandlerMiddleware)
 
 
-@app.get("/ping")
+@app.post("/ping")
 @RateLimiter(max_calls=10, cooldown_time=60)
-async def read_root(req: Request):
+async def read_root(req: Request, model: PingModel):
     logger.info("Ping!")
-    return {"message": "pong"}
+    return model
 
 
 app.include_router(user_router)

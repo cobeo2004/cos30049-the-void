@@ -1,4 +1,3 @@
-import Footer from "@/app/(landing)/_components/Footer";
 import { Navbar } from "@/app/(landing)/_components/Navbar";
 
 export default function RootLayout({
@@ -12,7 +11,6 @@ export default function RootLayout({
         <Navbar />
       </div>
       <div className="h-screen w-screen">{children}</div>
-      <Footer />
     </>
   );
 }
