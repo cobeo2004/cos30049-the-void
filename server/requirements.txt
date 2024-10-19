@@ -6,3 +6,4 @@ python-jose
 python-dotenv
 fastapi-limiter
 pytest
+beautifulsoup4

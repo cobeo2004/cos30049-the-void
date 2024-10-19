@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI, Request
 from pydantic import BaseModel
-from routers import user_router, prediction_router
+from routers import user_router, prediction_router, craweler_router
 from fastapi.middleware.cors import CORSMiddleware
 from context import FastAPILifespan, RateLimiter
 from utils.exceptions import ExceptionHandlerMiddleware
@@ -39,14 +39,13 @@ async def read_root(req: Request, model: PingModel):
     return model
 
 
-app.include_router(user_router)
-app.include_router(prediction_router)
-app.include_router(auth_router)
-
-
+app.include_router(user_router, prefix="/api/v1")
+app.include_router(prediction_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(craweler_router, prefix="/api/v1")
+app.include_router
 def bootstrap():
     import uvicorn
-
     uvicorn.run("main:app", host="localhost", port=8000, reload=True)
 
 

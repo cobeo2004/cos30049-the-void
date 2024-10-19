@@ -4,7 +4,7 @@ import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 
 const geistSans = localFont({
@@ -28,6 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  unstable_noStore();
   revalidatePath("/");
   return (
     <html lang="en">

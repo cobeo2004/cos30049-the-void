@@ -1,16 +1,12 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import chained, { MiddlewareFactory } from "./middlewares/chained";
+import withAuthMiddleware from "./middlewares/withAuth";
+import withHeaderMiddleware from "./middlewares/withHeader";
+const middlewares = [
+  withAuthMiddleware,
+  withHeaderMiddleware,
+] satisfies Array<MiddlewareFactory>;
 
-export async function middleware(request: NextRequest) {
-  // Add a new header x-current-path which passes the path to downstream components
-  const headers = new Headers(request.headers);
-  headers.set("x-current-path", request.nextUrl.pathname);
-  // const session = await validateSession();
-  // if (session === null) {
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
-  return NextResponse.next({ headers });
-}
+export default chained(middlewares);
 
 export const config = {
   matcher: [
