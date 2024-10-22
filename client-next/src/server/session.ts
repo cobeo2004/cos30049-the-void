@@ -23,11 +23,9 @@ export async function validateSession(): Promise<LoginResult | null> {
     },
   });
   if (!result.ok) {
-    console.log("result not ok");
     return null;
   }
   const res = (await result.json()) as User;
-  console.log("result is ok");
   return {
     access_token: accessToken,
     refresh_token: refreshToken,

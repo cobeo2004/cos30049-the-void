@@ -1,6 +1,7 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, Request
-from controller import PostController
-from prisma.partials import PostAllFields
+from controller import UserController
+from prisma.partials import UserForSignUp
 from context.RateLimiterWrapper import RateLimiter
 from utils.auth import get_current_user_id
 
@@ -11,44 +12,45 @@ router = APIRouter(
 
 @router.get("")
 @RateLimiter(max_calls=10, cooldown_time=60)
-async def read_posts(
-    req: Request, controller: PostController = Depends(PostController)
+async def get_all_users(
+    req: Request, controller: UserController = Depends(UserController)
 ):
-    return await controller.get_posts()
+    return await controller.get_users()
 
 
 @router.get("/{item_id}")
 @RateLimiter(max_calls=10, cooldown_time=60)
-async def read_post_by_id(
-    req: Request, item_id: int, controller: PostController = Depends(PostController)
+async def get_user_by_id(
+    req: Request, item_id: str, controller: UserController = Depends(UserController)
 ):
-    return await controller.get_post(item_id)
+    return await controller.get_user(item_id)
 
 
 @router.post("")
 @RateLimiter(max_calls=10, cooldown_time=60)
-async def append_post(
+async def create_user(
     req: Request,
-    model: PostAllFields,
-    controller: PostController = Depends(PostController),
+    model: UserForSignUp,
+    controller: UserController = Depends(UserController),
 ):
-    return await controller.add_post(model)
+    return await controller.create_user(model)
 
 
 @router.put("/{item_id}")
 @RateLimiter(max_calls=10, cooldown_time=60)
-async def update_post(
+async def update_user(
     req: Request,
-    item_id: int,
-    model: PostAllFields,
-    controller: PostController = Depends(PostController),
+    item_id: str,
+    model: Optional[UserForSignUp],
+    controller: UserController = Depends(UserController),
 ):
-    return await controller.update_post(item_id, model)
+    print("Body requested: ", model)
+    return await controller.update_user(item_id, model)
 
 
 @router.delete("/{item_id}")
 @RateLimiter(max_calls=10, cooldown_time=60)
-async def delete_post(
-    req: Request, item_id: int, controller: PostController = Depends(PostController)
+async def delete_user(
+    req: Request, item_id: str, controller: UserController = Depends(UserController)
 ):
-    return await controller.delete_post(item_id)
+    return await controller.delete_user(item_id)

@@ -26,10 +26,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { loginSchema } from "@/server/auth/schema";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/loading-spinner";
+import { useAction } from "next-safe-action/hooks";
+import { signIn } from "@/server/auth/signIn";
 
 export default function Login() {
   const router = useRouter();
@@ -41,21 +42,39 @@ export default function Login() {
     },
   });
 
-  const loginMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof loginSchema>) => {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok || response.status !== 200) {
-        throw new Error(`${response.statusText}`);
-      }
-      return response;
-    },
-    onMutate: () => {
+  // const loginMutation = useMutation({
+  //   mutationFn: async (values: z.infer<typeof loginSchema>) => {
+  //     const response = await fetch("/api/auth/login", {
+  //       method: "POST",
+  //       body: JSON.stringify(values),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     if (!response.ok || response.status !== 200) {
+  //       throw new Error(`${response.statusText}`);
+  //     }
+  //     return response;
+  //   },
+  //   onMutate: () => {
+  //     toast.loading("Logging in...");
+  //   },
+  //   onSuccess: () => {
+  //     router.prefetch("/");
+  //     router.push("/");
+  //     toast.dismiss();
+  //   },
+  //   onError: () => {
+  //     toast.dismiss();
+  //     toast.error("Login failed");
+  //   },
+  //   onSettled: () => {
+  //     toast.dismiss();
+  //   },
+  // });
+
+  const { isExecuting, executeAsync, result, hasErrored } = useAction(signIn, {
+    onExecute: () => {
       toast.loading("Logging in...");
     },
     onSuccess: () => {
@@ -72,8 +91,13 @@ export default function Login() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    loginMutation.mutate(values);
+  const loginErr =
+    result.serverError ||
+    result.validationErrors ||
+    result.bindArgsValidationErrors;
+
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    await executeAsync(values);
   };
 
   return (
@@ -123,20 +147,16 @@ export default function Login() {
                   </FormItem>
                 )}
               />
-              {loginMutation.isError && (
+              {hasErrored && (
                 <div className="flex items-center space-x-2 text-red-500">
                   <AlertCircle size={16} />
-                  <span className="text-sm">{loginMutation.error.message}</span>
+                  <span className="text-sm">{loginErr as string}</span>
                 </div>
               )}
             </CardContent>
             <CardFooter className="flex flex-col items-center">
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending ? <LoadingSpinner /> : "Log in"}
+              <Button type="submit" className="w-full" disabled={isExecuting}>
+                {isExecuting ? <LoadingSpinner /> : "Log in"}
               </Button>
               <span className="text-sm text-gray-500 pt-4">
                 Don&apos;t have an account?{" "}

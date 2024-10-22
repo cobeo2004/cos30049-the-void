@@ -34,7 +34,7 @@ async def sign_in(
 
 
 @router.get("/me", response_model=UserAllFields)
-@RateLimiter(max_calls=10, cooldown_time=60)
+# @RateLimiter(max_calls=10, cooldown_time=60)
 async def me(
     req: Request,
     token: Any = Depends(get_current_user_id),

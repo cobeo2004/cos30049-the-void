@@ -26,10 +26,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { signupSchema } from "@/server/auth/schema";
-import { useMutation } from "@tanstack/react-query";
+// import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/ui/loading-spinner";
+import { useAction } from "next-safe-action/hooks";
+import { signUp } from "@/server/auth/signUp";
 
 export default function Signup() {
   const router = useRouter();
@@ -44,21 +46,38 @@ export default function Signup() {
     },
   });
 
-  const signupMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof signupSchema>) => {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok || response.status !== 200) {
-        throw new Error(`${response.statusText}`);
-      }
-      return response;
-    },
-    onMutate: () => {
+  // const signupMutation = useMutation({
+  //   mutationFn: async (values: z.infer<typeof signupSchema>) => {
+  //     const response = await fetch("/api/auth/signup", {
+  //       method: "POST",
+  //       body: JSON.stringify(values),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     if (!response.ok || response.status !== 200) {
+  //       throw new Error(`${response.statusText}`);
+  //     }
+  //     return response;
+  //   },
+  //   onMutate: () => {
+  //     toast.loading("Signing up...");
+  //   },
+  //   onSuccess: () => {
+  //     router.prefetch("/");
+  //     router.push("/");
+  //     toast.dismiss();
+  //   },
+  //   onError: () => {
+  //     toast.dismiss();
+  //     toast.error("Signup failed");
+  //   },
+  //   onSettled: () => {
+  //     toast.dismiss();
+  //   },
+  // });
+  const signUpMutation = useAction(signUp, {
+    onExecute: () => {
       toast.loading("Signing up...");
     },
     onSuccess: () => {
@@ -74,10 +93,14 @@ export default function Signup() {
       toast.dismiss();
     },
   });
-
-  const onSubmit = (values: z.infer<typeof signupSchema>) => {
-    signupMutation.mutate(values);
+  const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+    await signUpMutation.executeAsync(values);
   };
+
+  const loginErr =
+    signUpMutation.result.serverError ||
+    signUpMutation.result.validationErrors ||
+    signUpMutation.result.bindArgsValidationErrors;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-t from-[#FFF8F8] from-0% via-[#8BDFFF] via-53% to-[#18BFFF] to-100% p-4">
@@ -169,12 +192,10 @@ export default function Signup() {
                   </FormItem>
                 )}
               />
-              {signupMutation.isError && (
+              {signUpMutation.hasErrored && (
                 <div className="flex items-center space-x-2 text-red-500">
                   <AlertCircle size={16} />
-                  <span className="text-sm">
-                    {signupMutation.error.message}
-                  </span>
+                  <span className="text-sm">{loginErr as string}</span>
                 </div>
               )}
             </CardContent>
@@ -182,9 +203,9 @@ export default function Signup() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={signupMutation.isPending}
+                disabled={signUpMutation.isPending}
               >
-                {signupMutation.isPending ? <LoadingSpinner /> : "Sign up"}
+                {signUpMutation.isPending ? <LoadingSpinner /> : "Sign up"}
               </Button>
               <span className="text-sm text-gray-500 pt-4">
                 Already have an account?{" "}

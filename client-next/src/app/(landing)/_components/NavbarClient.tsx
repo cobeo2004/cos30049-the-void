@@ -57,6 +57,8 @@ const NavLink = ({
 export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
   const router = useRouter();
 
+  console.log("userValue: ", session?.user);
+
   React.useEffect(() => {
     if (session === null) {
       router.refresh();

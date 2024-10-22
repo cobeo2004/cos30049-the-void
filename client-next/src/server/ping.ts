@@ -1,9 +1,13 @@
-import { API_URL } from "@/lib/constant";
+"use server";
 
-export async function ping() {
+import { API_URL } from "@/lib/constant";
+import { redirect } from "next/navigation";
+
+export const ping = async () => {
   const result = await fetch(`${API_URL}/ping`);
   if (!result.ok) {
-    throw new Error(result.statusText);
+    redirect("/404");
   }
+  console.log("Pinged server");
   return result.json();
-}
+};

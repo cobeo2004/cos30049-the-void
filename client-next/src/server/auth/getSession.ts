@@ -1,9 +1,8 @@
 "use server";
 
 import { validateSession } from "../session";
-import { LoginResult } from "@/types";
 
-export async function getSession(): Promise<LoginResult | null> {
+export const getSession = async () => {
   const session = await validateSession();
   return session;
-}
+};

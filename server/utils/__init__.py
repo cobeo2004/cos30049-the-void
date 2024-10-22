@@ -2,5 +2,5 @@ from .logger import *
 from .exceptions import *
 from .dotEnv import *
 from .auth import *
-
-__all__ = ["logger", "exceptions", "dotEnv", "auth"]
+from .CORS import *
+__all__ = ["logger", "exceptions", "dotEnv", "auth", "CORS"]
