@@ -16,6 +16,7 @@ class EnvironmentVariables:
         os.getenv("REFRESH_TOKEN_WILL_EXPIRES_DAYS")
     )
     TEST_ENDPOINT: str = os.getenv("TEST_ENDPOINT")
+    SERP_API_KEY: str = os.getenv("SERP_API_KEY")
 
 
 env = EnvironmentVariables()

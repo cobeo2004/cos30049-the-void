@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel
-from routers import user_router, prediction_router, craweler_router
+from routers import user_router, prediction_router, flight_prices_router
 from fastapi.middleware.cors import CORSMiddleware
 from context import FastAPILifespan, RateLimiter
 from utils.exceptions import ExceptionHandlerMiddleware
@@ -43,7 +43,7 @@ async def read_root(req: Request):
 app.include_router(user_router, prefix=API_PREFIX)
 app.include_router(prediction_router, prefix=API_PREFIX)
 app.include_router(auth_router, prefix=API_PREFIX)
-app.include_router(craweler_router, prefix=API_PREFIX)
+app.include_router(flight_prices_router, prefix=API_PREFIX)
 
 
 def bootstrap():

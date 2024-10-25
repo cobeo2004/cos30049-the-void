@@ -1,7 +1,11 @@
+from typing import List
 from fastapi import APIRouter
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
 import requests
+from controller import FlightPricesModel
+from models import DestinationModel
+
 router = APIRouter(prefix="/craweler", tags=["Craweler"])
 
 class TripModel(BaseModel):
@@ -42,3 +46,9 @@ async def trip(model: TripModel):
     soup = BeautifulSoup(response.text, "html.parser")
     print(soup)
     return {"status": "success"}
+
+@router.get("/destinations", response_model=List[DestinationModel])
+async def get_all_destinations():
+    model = FlightPricesModel()
+    destinations = model.get_all_destinations()
+    return destinations
