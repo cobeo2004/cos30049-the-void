@@ -67,9 +67,9 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
 
   return (
     <nav className="flex justify-between items-center p-4 bg-background text-foreground shadow-md border-b border-border relative">
-      <div className="flex items-center">
+      <Link href="/" className="flex items-center">
         <Image src={Logo} alt="AviAI Logo" width={150} height={150} />
-      </div>
+      </Link>
 
       {/* Desktop view */}
       <ul className="hidden md:flex space-x-4">

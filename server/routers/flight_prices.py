@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
 import requests
@@ -8,11 +8,13 @@ from models import DestinationModel
 
 router = APIRouter(prefix="/craweler", tags=["Craweler"])
 
+
 class TripModel(BaseModel):
     from_location: str
     to_location: str
     start_date: str
     end_date: str
+
 
 @router.get("/top-100")
 async def top_100():
@@ -39,6 +41,7 @@ async def top_100():
     ]
     return songs
 
+
 @router.get("/trip")
 async def trip(model: TripModel):
     url = f"https://www.expedia.ie/Flights-Search?trip=oneway&leg1=from:{model.from_location},to:{model.to_location},departure:{model.start_date}TANYT&passengers=adults:1,children:0,seniors:0,infantinlap:Y&options=cabinclass:economy&mode=search&origref=www.expedia.ie"
@@ -47,8 +50,16 @@ async def trip(model: TripModel):
     print(soup)
     return {"status": "success"}
 
+
 @router.get("/destinations", response_model=List[DestinationModel])
-async def get_all_destinations():
-    model = FlightPricesModel()
+async def get_all_destinations(model: FlightPricesModel = Depends(FlightPricesModel)):
     destinations = model.get_all_destinations()
     return destinations
+
+
+@router.get("/destinations/", response_model=List[DestinationModel])
+async def get_destination(
+    region_name: str, model: FlightPricesModel = Depends(FlightPricesModel)
+):
+    destination = model.get_destinations_by_region_name(region_name)
+    return destination
