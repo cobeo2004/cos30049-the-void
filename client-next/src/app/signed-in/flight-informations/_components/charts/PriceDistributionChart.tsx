@@ -45,11 +45,13 @@ export const PriceDistributionChart: React.FC<PriceDistributionChartProps> = ({
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Price Distribution</CardTitle>
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <CardHeader className="border-b pb-4">
+        <CardTitle className="text-2xl font-semibold text-gray-800">
+          Price Distribution
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>

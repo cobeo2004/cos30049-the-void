@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import QueryProvider from "@/lib/providers/QueryProvider";
+// import QueryProvider from "@/lib/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { revalidatePath, unstable_noStore } from "next/cache";
 import { ping } from "@/server/ping";
@@ -35,7 +35,8 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>{children}</QueryProvider>
+        {/* <QueryProvider>{children}</QueryProvider> */}
+        {children}
         <Toaster position="top-center" />
       </body>
     </html>

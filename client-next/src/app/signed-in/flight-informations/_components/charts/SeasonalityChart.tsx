@@ -47,11 +47,13 @@ export const SeasonalityChart: React.FC<SeasonalityChartProps> = ({
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Seasonality Analysis</CardTitle>
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <CardHeader className="border-b pb-4">
+        <CardTitle className="text-2xl font-semibold text-gray-800">
+          Seasonality Analysis
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
