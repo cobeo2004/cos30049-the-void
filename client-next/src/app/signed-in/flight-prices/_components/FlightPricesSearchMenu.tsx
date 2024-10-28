@@ -3,49 +3,134 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Plane, Calendar, Users, ArrowRightLeft, Loader2 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { GetDestinationsByRegionNameReturnValue } from "@/server/flight-prices/getDestionations";
 
 // Simulated airport data
 const airports = [
-  { code: "JFK", name: "John F. Kennedy International Airport" },
-  { code: "LHR", name: "London Heathrow Airport" },
-  { code: "CDG", name: "Charles de Gaulle Airport" },
-  { code: "LAX", name: "Los Angeles International Airport" },
-  { code: "DXB", name: "Dubai International Airport" },
-  { code: "HND", name: "Tokyo Haneda Airport" },
-  { code: "SIN", name: "Singapore Changi Airport" },
-  { code: "AMS", name: "Amsterdam Airport Schiphol" },
-  { code: "FRA", name: "Frankfurt Airport" },
-  { code: "IST", name: "Istanbul Airport" },
-];
+  {
+    country_code: "US",
+    region_name: "New York",
+    iata: "JFK",
+    icao: "KJFK",
+    airport: "John F. Kennedy International Airport",
+    latitude: 40.6413,
+    longitude: -73.7781,
+  },
+  {
+    country_code: "GB",
+    region_name: "England",
+    iata: "LHR",
+    icao: "EGLL",
+    airport: "London Heathrow Airport",
+    latitude: 51.47,
+    longitude: -0.4543,
+  },
+  {
+    country_code: "FR",
+    region_name: "Île-de-France",
+    iata: "CDG",
+    icao: "LFPG",
+    airport: "Charles de Gaulle Airport",
+    latitude: 49.0097,
+    longitude: 2.5479,
+  },
+  {
+    country_code: "US",
+    region_name: "California",
+    iata: "LAX",
+    icao: "KLAX",
+    airport: "Los Angeles International Airport",
+    latitude: 33.9416,
+    longitude: -118.4085,
+  },
+  {
+    country_code: "AE",
+    region_name: "Dubai",
+    iata: "DXB",
+    icao: "OMDB",
+    airport: "Dubai International Airport",
+    latitude: 25.2532,
+    longitude: 55.3657,
+  },
+  {
+    country_code: "JP",
+    region_name: "Tokyo",
+    iata: "HND",
+    icao: "RJTT",
+    airport: "Tokyo Haneda Airport",
+    latitude: 35.5533,
+    longitude: 139.7811,
+  },
+  {
+    country_code: "SG",
+    region_name: "Singapore",
+    iata: "SIN",
+    icao: "WSSS",
+    airport: "Singapore Changi Airport",
+    latitude: 1.3644,
+    longitude: 103.9915,
+  },
+  {
+    country_code: "NL",
+    region_name: "North Holland",
+    iata: "AMS",
+    icao: "EHAM",
+    airport: "Amsterdam Airport Schiphol",
+    latitude: 52.3086,
+    longitude: 4.7639,
+  },
+  {
+    country_code: "DE",
+    region_name: "Hesse",
+    iata: "FRA",
+    icao: "EDDF",
+    airport: "Frankfurt Airport",
+    latitude: 50.0379,
+    longitude: 8.5622,
+  },
+  {
+    country_code: "TR",
+    region_name: "Istanbul",
+    iata: "IST",
+    icao: "LTFM",
+    airport: "Istanbul Airport",
+    latitude: 41.2753,
+    longitude: 28.7519,
+  },
+] satisfies Array<GetDestinationsByRegionNameReturnValue>;
 
 // Simulated API call
-const searchAirports = (query: string): Promise<typeof airports> => {
+const searchAirports = (
+  query: string
+): Promise<GetDestinationsByRegionNameReturnValue[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       const results = airports.filter(
         (airport) =>
-          airport.name.toLowerCase().includes(query.toLowerCase()) ||
-          airport.code.toLowerCase().includes(query.toLowerCase())
+          airport.airport.toLowerCase().includes(query.toLowerCase()) ||
+          airport.iata.toLowerCase().includes(query.toLowerCase())
       );
       resolve(results);
     }, 500); // Simulate network delay
   });
 };
 
-function SearchPage() {
+function FlightPricesSearchMenu() {
   const [tripType, setTripType] = useState("round");
   const [fromQuery, setFromQuery] = useState("");
   const [toQuery, setToQuery] = useState("");
-  const [fromSuggestions, setFromSuggestions] = useState<typeof airports>([]);
-  const [toSuggestions, setToSuggestions] = useState<typeof airports>([]);
+  const [fromSuggestions, setFromSuggestions] = useState<
+    GetDestinationsByRegionNameReturnValue[]
+  >([]);
+  const [toSuggestions, setToSuggestions] = useState<
+    GetDestinationsByRegionNameReturnValue[]
+  >([]);
   const [fromLoading, setFromLoading] = useState(false);
   const [toLoading, setToLoading] = useState(false);
-  const [selectedFrom, setSelectedFrom] = useState<(typeof airports)[0] | null>(
-    null
-  );
-  const [selectedTo, setSelectedTo] = useState<(typeof airports)[0] | null>(
-    null
-  );
+  const [selectedFrom, setSelectedFrom] =
+    useState<GetDestinationsByRegionNameReturnValue | null>(null);
+  const [selectedTo, setSelectedTo] =
+    useState<GetDestinationsByRegionNameReturnValue | null>(null);
 
   const debouncedFromQuery = useDebounce(fromQuery, 300);
   const debouncedToQuery = useDebounce(toQuery, 300);
@@ -54,7 +139,9 @@ function SearchPage() {
     async (
       query: string,
       setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-      setSuggestions: React.Dispatch<React.SetStateAction<typeof airports>>
+      setSuggestions: React.Dispatch<
+        React.SetStateAction<GetDestinationsByRegionNameReturnValue[]>
+      >
     ) => {
       if (query) {
         setLoading(true);
@@ -76,15 +163,17 @@ function SearchPage() {
     performSearch(debouncedToQuery, setToLoading, setToSuggestions);
   }, [debouncedToQuery, performSearch]);
 
-  const handleFromSelect = (airport: (typeof airports)[0]) => {
+  const handleFromSelect = (
+    airport: GetDestinationsByRegionNameReturnValue
+  ) => {
     setSelectedFrom(airport);
-    setFromQuery(airport.name);
+    setFromQuery(airport.airport);
     setFromSuggestions([]);
   };
 
-  const handleToSelect = (airport: (typeof airports)[0]) => {
+  const handleToSelect = (airport: GetDestinationsByRegionNameReturnValue) => {
     setSelectedTo(airport);
-    setToQuery(airport.name);
+    setToQuery(airport.airport);
     setToSuggestions([]);
   };
 
@@ -148,11 +237,11 @@ function SearchPage() {
                 <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto">
                   {fromSuggestions.map((airport) => (
                     <li
-                      key={airport.code}
+                      key={airport.iata}
                       className="px-4 py-2 hover:bg-sky-100 cursor-pointer"
                       onClick={() => handleFromSelect(airport)}
                     >
-                      {airport.name} ({airport.code})
+                      {airport.airport} ({airport.iata})
                     </li>
                   ))}
                 </ul>
@@ -185,11 +274,11 @@ function SearchPage() {
                 <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto">
                   {toSuggestions.map((airport) => (
                     <li
-                      key={airport.code}
+                      key={airport.iata}
                       className="px-4 py-2 hover:bg-sky-100 cursor-pointer"
                       onClick={() => handleToSelect(airport)}
                     >
-                      {airport.name} ({airport.code})
+                      {airport.airport} ({airport.iata})
                     </li>
                   ))}
                 </ul>
@@ -295,4 +384,4 @@ function SearchPage() {
   );
 }
 
-export default SearchPage;
+export default FlightPricesSearchMenu;

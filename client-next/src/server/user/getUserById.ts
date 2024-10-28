@@ -4,6 +4,7 @@ import { API_URL } from "@/lib/constant";
 import { User } from "@/types";
 import { authAction } from "@/lib/actionClient";
 import { z } from "zod";
+import { authFetch } from "@/lib/authFetch";
 
 export const getUserById = authAction
   .schema(
@@ -13,16 +14,12 @@ export const getUserById = authAction
   )
   .action(async ({ ctx }) => {
     try {
-      const res = await fetch(`${API_URL}/user/${ctx.user.id}`, {
-        headers: {
-          Authorization: `Bearer ${ctx.access_token}`,
-          "Content-Type": "application/json",
+      return await authFetch<User>(`${API_URL}/user/${ctx.user.id}`, {
+        options: {
+          method: "GET",
         },
+        ctx,
       });
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      }
-      return (await res.json()) as User;
     } catch (error) {
       throw new Error((error as Error).message);
     }

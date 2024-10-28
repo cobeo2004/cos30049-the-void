@@ -1,7 +1,8 @@
-import React from "react";
+import React, { Suspense } from "react";
+import LoadingComponent from "./_components/loading";
 
 function AuthLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <Suspense fallback={<LoadingComponent />}>{children}</Suspense>;
 }
 
 export default AuthLayout;

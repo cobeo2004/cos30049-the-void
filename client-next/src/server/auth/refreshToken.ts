@@ -6,24 +6,23 @@ import { LoginResult } from "@/types";
 import { setSession } from "../session";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { authFetch } from "@/lib/authFetch";
 
 export async function refreshToken() {
   const { refresh_token: refreshToken, access_token } =
     (await getSession()) as LoginResult;
   const currPath = headers().get("x-current-path");
 
-  const response = await fetch(`${API_URL}/auth/refreshToken`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${access_token}`,
+  const response = await authFetch(`${API_URL}/auth/refreshToken`, {
+    options: {
+      method: "POST",
+      body: JSON.stringify({ refreshToken }),
     },
-    body: JSON.stringify({ refreshToken }),
+    ctx: {
+      access_token: access_token,
+    },
   });
 
-  if (response.ok) {
-    const data = await response.json();
-    setSession(data);
-    revalidatePath(currPath as string);
-  }
+  setSession(response as LoginResult);
+  revalidatePath(currPath as string);
 }

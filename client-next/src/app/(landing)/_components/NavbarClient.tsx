@@ -39,7 +39,8 @@ const NavLink = ({
   children: React.ReactNode;
 }) => {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  // Change the isActive check to handle nested routes
+  const isActive = pathname === href || pathname.startsWith(href + "/");
 
   return (
     <Link
@@ -56,8 +57,6 @@ const NavLink = ({
 
 export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
   const router = useRouter();
-
-  console.log("userValue: ", session?.user);
 
   React.useEffect(() => {
     if (session === null) {
@@ -126,7 +125,7 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="flex items-center">
-                    <User className="mr-2 h-4 w-4" /> Profile
+                    <User className="mr-2 h-4 w-4" /> Edit Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

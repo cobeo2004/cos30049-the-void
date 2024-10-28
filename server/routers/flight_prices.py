@@ -5,8 +5,11 @@ from pydantic import BaseModel
 import requests
 from controller import FlightPricesModel
 from models import DestinationModel
+from utils.auth import get_current_user_id
 
-router = APIRouter(prefix="/craweler", tags=["Craweler"])
+router = APIRouter(
+    prefix="/flight-prices", tags=["Flight Prices"], dependencies=[Depends(get_current_user_id)]
+)
 
 
 class TripModel(BaseModel):

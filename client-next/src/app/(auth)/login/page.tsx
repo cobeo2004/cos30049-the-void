@@ -42,37 +42,6 @@ export default function Login() {
     },
   });
 
-  // const loginMutation = useMutation({
-  //   mutationFn: async (values: z.infer<typeof loginSchema>) => {
-  //     const response = await fetch("/api/auth/login", {
-  //       method: "POST",
-  //       body: JSON.stringify(values),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     if (!response.ok || response.status !== 200) {
-  //       throw new Error(`${response.statusText}`);
-  //     }
-  //     return response;
-  //   },
-  //   onMutate: () => {
-  //     toast.loading("Logging in...");
-  //   },
-  //   onSuccess: () => {
-  //     router.prefetch("/");
-  //     router.push("/");
-  //     toast.dismiss();
-  //   },
-  //   onError: () => {
-  //     toast.dismiss();
-  //     toast.error("Login failed");
-  //   },
-  //   onSettled: () => {
-  //     toast.dismiss();
-  //   },
-  // });
-
   const { isExecuting, executeAsync, result, hasErrored } = useAction(signIn, {
     onExecute: () => {
       toast.loading("Logging in...");

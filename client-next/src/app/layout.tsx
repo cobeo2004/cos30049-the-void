@@ -3,9 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
-import { Suspense } from "react";
 import { revalidatePath, unstable_noStore } from "next/cache";
-import LoadingSpinner from "@/components/ui/loading-spinner";
 import { ping } from "@/server/ping";
 
 const geistSans = localFont({
@@ -34,20 +32,12 @@ export default async function RootLayout({
   revalidatePath("/");
   return (
     <html lang="en">
-      <Suspense
-        fallback={
-          <div className="flex justify-center items-center h-screen">
-            <LoadingSpinner />
-          </div>
-        }
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <QueryProvider>{children}</QueryProvider>
-          <Toaster position="top-center" />
-        </body>
-      </Suspense>
+        <QueryProvider>{children}</QueryProvider>
+        <Toaster position="top-center" />
+      </body>
     </html>
   );
 }

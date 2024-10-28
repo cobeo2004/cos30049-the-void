@@ -1,4 +1,6 @@
 import { type Metadata } from "next";
+import LoadingComponent from "../(auth)/_components/loading";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -10,5 +12,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <>{children}</>;
+  return <Suspense fallback={<LoadingComponent />}>{children}</Suspense>;
 }
