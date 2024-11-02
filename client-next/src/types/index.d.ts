@@ -22,10 +22,10 @@ export declare interface Flight {
 }
 
 export declare interface PredictStatistics {
-  averagePrice: number;
+  predictedPrice: number;
+  confidence: number;
   priceChange: number;
-  lowestPrice: number;
-  bestTime: string;
+  lastUpdated: string;
 }
 
 export declare interface PredictTrendData {

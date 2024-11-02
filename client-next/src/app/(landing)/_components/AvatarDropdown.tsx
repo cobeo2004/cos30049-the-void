@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logOut } from "@/server/auth/logout";
 import { User } from "@/types";
-import { User as UserIcon, Settings, HelpCircle, LogOut } from "lucide-react";
+import { User as UserIcon, LogOut } from "lucide-react";
 import UserModal from "./UserModal";
 import { updateUser } from "@/server/user/updateUser";
 import { z } from "zod";
@@ -69,15 +69,7 @@ export default function AvatarDropdown({ user }: AvatarDropdownProps) {
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setIsUserModalOpen(true)}>
             <UserIcon className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <HelpCircle className="mr-2 h-4 w-4" />
-            <span>Help</span>
+            <span>Edit Profile</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

@@ -35,35 +35,15 @@ import { useDebounce } from "@/hooks/useDebounce";
 import LoadingComponent from "@/app/(auth)/_components/loading";
 import { useAction } from "next-safe-action/hooks";
 import { getDestinationsByRegionName } from "@/server/flight-prices/getDestionations";
-
-// Form schema
-const formSchema = z.object({
-  from: z.object({
-    airport: z.string().min(1, "Departure city is required"),
-    iata: z.string(),
-    icao: z.string(),
-    latitude: z.number(),
-    longitude: z.number(),
-  }),
-  to: z.object({
-    airport: z.string().min(1, "Arrival city is required"),
-    iata: z.string(),
-    icao: z.string(),
-    latitude: z.number(),
-    longitude: z.number(),
-  }),
-  departDate: z.date({
-    required_error: "Departure date is required",
-  }),
-  returnDate: z.date({
-    required_error: "Return date is required",
-  }),
-  stops: z.enum(["direct", "one", "two"]),
-});
+import { getAllAirlines } from "@/server/flight-informations/getAllAirlines";
+import { flightInformationsSearchMenuSchema } from "@/server/flight-informations/schema";
+import { processFlightInformationsURLParams } from "@/lib/data/processDataHelper";
+import { useRouter } from "next/navigation";
 
 function FlightInformationsSearchMenu() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const router = useRouter();
+  const form = useForm<z.infer<typeof flightInformationsSearchMenuSchema>>({
+    resolver: zodResolver(flightInformationsSearchMenuSchema),
     defaultValues: {
       stops: "direct",
     },
@@ -77,6 +57,7 @@ function FlightInformationsSearchMenu() {
   const [toSuggestions, setToSuggestions] = useState<
     GetDestinationsByRegionNameReturnValue[]
   >([]);
+  const [airlines, setAirlines] = useState<string[]>([]);
   const [fromLoading, setFromLoading] = useState(false);
   const [toLoading, setToLoading] = useState(false);
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
@@ -87,17 +68,32 @@ function FlightInformationsSearchMenu() {
   const debouncedFromQuery = useDebounce(fromQuery, 300);
   const debouncedToQuery = useDebounce(toQuery, 300);
 
-  const { executeAsync: fromSearchDestination, result: fromSearchResult } =
-    useAction(getDestinationsByRegionName);
-  const { executeAsync: toSearchDestination, result: toSearchResult } =
-    useAction(getDestinationsByRegionName);
+  const { executeAsync: fromSearchDestination } = useAction(
+    getDestinationsByRegionName
+  );
+  const { executeAsync: toSearchDestination } = useAction(
+    getDestinationsByRegionName
+  );
+  const { executeAsync: fetchAirlines } = useAction(getAllAirlines);
+
+  useEffect(() => {
+    const loadAirlines = async () => {
+      const result = await fetchAirlines();
+      if (result && result.data) {
+        setAirlines(result.data);
+      }
+    };
+    loadAirlines();
+  }, []);
 
   useEffect(() => {
     async function searchFrom() {
       if (debouncedFromQuery) {
         setFromLoading(true);
-        await fromSearchDestination({ q: debouncedFromQuery });
-        if (fromSearchResult.data) {
+        const fromSearchResult = await fromSearchDestination({
+          q: debouncedFromQuery,
+        });
+        if (fromSearchResult && fromSearchResult.data) {
           setFromSuggestions(fromSearchResult.data);
           setShowFromSuggestions(true);
         }
@@ -114,8 +110,10 @@ function FlightInformationsSearchMenu() {
     async function searchTo() {
       if (debouncedToQuery) {
         setToLoading(true);
-        await toSearchDestination({ q: debouncedToQuery });
-        if (toSearchResult.data) {
+        const toSearchResult = await toSearchDestination({
+          q: debouncedToQuery,
+        });
+        if (toSearchResult && toSearchResult.data) {
           setToSuggestions(toSearchResult.data);
           setShowToSuggestions(true);
         }
@@ -144,8 +142,11 @@ function FlightInformationsSearchMenu() {
     setToSelected(true);
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = (
+    values: z.infer<typeof flightInformationsSearchMenuSchema>
+  ) => {
+    const url = processFlightInformationsURLParams(values);
+    router.push(`/signed-in/flight-informations/predictions?${url}`);
   };
 
   return (
@@ -315,10 +316,10 @@ function FlightInformationsSearchMenu() {
 
               <FormField
                 control={form.control}
-                name="returnDate"
+                name="arriveDate"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Return</FormLabel>
+                    <FormLabel>Arrive</FormLabel>
                     <Popover>
                       <FormControl>
                         <PopoverTrigger asChild>
@@ -358,30 +359,56 @@ function FlightInformationsSearchMenu() {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="stops"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>Number of Stops</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select number of stops" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="direct">Direct Flight</SelectItem>
-                      <SelectItem value="one">One Stop</SelectItem>
-                      <SelectItem value="two">Two Stops</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
+            <div className="flex space-x-4">
+              <FormField
+                control={form.control}
+                name="stops"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Number of Stops</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select number of stops" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="direct">Direct Flight</SelectItem>
+                        <SelectItem value="1">One Stop</SelectItem>
+                        <SelectItem value="2">Two Stops</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="airline"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Preferred Airline</FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select airline" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {airlines.map((airline) => (
+                          <SelectItem key={airline} value={airline}>
+                            {airline}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <Button
               type="submit"

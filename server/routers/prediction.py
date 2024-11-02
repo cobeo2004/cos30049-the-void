@@ -11,8 +11,6 @@ router = APIRouter(
 )
 
 
-
-
 @router.post("")
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def create_prediction(

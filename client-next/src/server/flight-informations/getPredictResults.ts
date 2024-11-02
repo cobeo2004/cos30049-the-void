@@ -1,18 +1,52 @@
 "use server";
 
 import { authAction } from "@/lib/actionClient";
+import { authFetch } from "@/lib/authFetch";
 import { PredictResults } from "@/types";
+import { flightInformationsSearchMenuSchema } from "./schema";
+import { API_URL } from "@/lib/constant";
 
-export const getPredictResults = authAction.action(
-  async (): Promise<PredictResults> => {
+export const getPredictResults = authAction
+  .schema(flightInformationsSearchMenuSchema)
+  .action(async ({ parsedInput, ctx }): Promise<PredictResults> => {
+    const body = {
+      departure_date: parsedInput.departDate.toISOString().split("T")[0],
+      departure_time: parsedInput.departDate
+        .toISOString()
+        .split("T")[1]
+        .split(".")[0],
+      arrival_date: parsedInput.arriveDate.toISOString().split("T")[0],
+      arrival_time: parsedInput.arriveDate
+        .toISOString()
+        .split("T")[1]
+        .split(".")[0],
+      departure_city: `${parsedInput.from.iata} ${parsedInput.from.airport}`,
+      arrival_city: `${parsedInput.to.iata} ${parsedInput.to.airport}`,
+      stops: parsedInput.stops,
+      airline: parsedInput.airline,
+    };
+
+    const response = await authFetch<{ predictions: { prediction: string } }>(
+      `${API_URL}/prediction`,
+      {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(body),
+        },
+        ctx,
+      }
+    );
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
           statistics: {
-            averagePrice: 980.75,
+            confidence: 92,
+            predictedPrice: Number(response.predictions.prediction),
             priceChange: 5.2,
-            lowestPrice: 720,
-            bestTime: "October",
+            lastUpdated: "2 hours ago",
           },
           trendData: [
             { month: "Sep", price: 850, predicted: 820 },
@@ -45,5 +79,4 @@ export const getPredictResults = authAction.action(
         });
       }, 2000);
     }) as Promise<PredictResults>;
-  }
-);
+  });

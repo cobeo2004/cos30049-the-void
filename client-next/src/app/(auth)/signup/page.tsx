@@ -29,7 +29,7 @@ import { signupSchema } from "@/server/auth/schema";
 // import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAction } from "next-safe-action/hooks";
 import { signUp } from "@/server/auth/signUp";
 

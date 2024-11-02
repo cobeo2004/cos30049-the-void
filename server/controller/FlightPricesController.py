@@ -1,9 +1,10 @@
-from utils.CSVs import ICAOReader
+from utils.CSVs import ICAOReader, AirplaneCarrierReader
 from models import DestinationModel, FlightPriceModel
 from utils.Serp import SerpHelper
 class FlightPricesController:
     def __init__(self):
         self.reader = ICAOReader()
+        self.airlineCarriers = AirplaneCarrierReader()
         self.serp = SerpHelper()
 
     def get_all_destinations(self):
@@ -24,4 +25,10 @@ class FlightPricesController:
     def get_flight_prices(self, params: FlightPriceModel) -> dict:
         print(params.model_dump())
         return self.serp.get_flight_prices(params)
-        # return {**params.model_dump(), "adults": int(params.adults), "children": int(params.children), "infants": int(params.infants_on_lap)}
+
+    def get_all_airlines(self):
+        df = self.airlineCarriers.get_airlines()
+        airlines = []
+        for index, row in df.iterrows():
+            airlines.append(row["airlines"])
+        return airlines

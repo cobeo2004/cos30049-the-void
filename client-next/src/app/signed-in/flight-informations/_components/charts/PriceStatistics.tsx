@@ -1,6 +1,12 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, DollarSign, Calendar, ArrowUpRight } from "lucide-react";
+import {
+  TrendingUp,
+  DollarSign,
+  Calendar,
+  ArrowUpRight,
+  Clock,
+} from "lucide-react";
 import { PredictStatistics } from "@/types";
 
 interface PriceStatisticsProps {
@@ -21,13 +27,16 @@ export const PriceStatistics: React.FC<PriceStatisticsProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="space-y-3">
-                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
-              </div>
-            ))}
+          <div className="space-y-6">
+            <div className="h-12 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+            <div className="grid grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-16 bg-gray-200 rounded animate-pulse"
+                ></div>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -35,55 +44,66 @@ export const PriceStatistics: React.FC<PriceStatisticsProps> = ({
   }
 
   const stats = data || {
-    averagePrice: 980.75,
+    predictedPrice: 980.75,
+    confidence: 92,
     priceChange: 5.2,
-    lowestPrice: 720,
-    bestTime: "October",
+    lastUpdated: "2 hours ago",
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader className="border-b pb-4">
-        <CardTitle className="text-2xl font-semibold text-gray-800">
-          Price Statistics
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <DollarSign className="h-6 w-6 text-blue-500" />
+          <span className="text-2xl font-bold">Predicted Price</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-6">
-        <div className="grid grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <DollarSign className="h-5 w-5 text-blue-500" />
-              <span className="font-medium">Average Price</span>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Main Price Display */}
+          <div className="flex items-baseline space-x-2">
+            <span className="text-4xl font-bold text-blue-600">
+              EUR{" "}
+              {stats.predictedPrice.toLocaleString("en-AU", {
+                minimumFractionDigits: 2,
+              })}
+            </span>
+            <div className="flex items-center text-sm font-medium text-green-600">
+              <ArrowUpRight className="h-4 w-4" />
+              <span>+{stats.priceChange}%</span>
             </div>
-            <p className="text-3xl font-bold text-gray-900">
-              AUD {stats.averagePrice.toLocaleString()}
-            </p>
           </div>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <TrendingUp className="h-5 w-5 text-green-500" />
-              <span className="font-medium">Price Change</span>
+
+          {/* Additional Stats */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+            {/* Confidence Score */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                <TrendingUp className="h-4 w-4" />
+                <span>Confidence</span>
+              </div>
+              <p className="text-xl font-semibold">{stats.confidence}%</p>
             </div>
-            <p className="text-3xl font-bold text-green-600 flex items-center">
-              +{stats.priceChange}%
-              <ArrowUpRight className="h-5 w-5 ml-2" />
-            </p>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <DollarSign className="h-5 w-5 text-blue-500" />
-              <span className="font-medium">Lowest Price</span>
+
+            {/* Price Change */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                <ArrowUpRight className="h-4 w-4" />
+                <span>Change</span>
+              </div>
+              <p className="text-xl font-semibold text-green-600">
+                +{stats.priceChange}%
+              </p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">
-              AUD {stats.lowestPrice.toLocaleString()}
-            </p>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Calendar className="h-5 w-5 text-blue-500" />
-              <span className="font-medium">Best Time to Book</span>
+
+            {/* Last Updated */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>Updated</span>
+              </div>
+              <p className="text-xl font-semibold">{stats.lastUpdated}</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{stats.bestTime}</p>
           </div>
         </div>
       </CardContent>

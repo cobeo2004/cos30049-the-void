@@ -35,3 +35,10 @@ async def get_flight_prices(
 ):
     flight_prices = controller.get_flight_prices(params)
     return flight_prices
+
+@router.get("/airlines", response_model=List[str])
+async def get_all_airlines(
+    controller: FlightPricesController = Depends(FlightPricesController),
+):
+    airlines = controller.get_all_airlines()
+    return airlines

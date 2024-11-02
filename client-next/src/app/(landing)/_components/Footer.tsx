@@ -20,66 +20,69 @@ const Footer: React.FC<{ bgColor?: string; className?: string }> = ({
   return (
     <footer className={cn("text-gray-800 py-12", bgColor, className)}>
       <div className="container mx-auto px-4">
-        <div className="flex flex-row md:flex-row justify-between items-start">
-          {/* Logo and Company Info */}
-          <div className="mb-8 md:mb-0">
-            <Image
-              src={logo}
-              alt="AviAI logo"
-              width={200}
-              height={50}
-              className="mb-4"
-            />
-            <p className="text-xl font-bold mb-4">
-              Predicting Skies, Optimizing Flies
-            </p>
-            <div className="flex items-center">
-              <Phone size={18} className="mr-2 text-gray-600" />
-              <span className="text-lg">+81 69996699</span>
+        <div className="flex justify-between items-start">
+          {/* Make this flex col on mobile and flex row on desktop */}
+          <div className="flex flex-col md:flex-row">
+            {/* Logo and Company Info */}
+            <div className="mb-8 md:mb-0 md:mr-20 lg:mr-64">
+              <Image
+                src={logo}
+                alt="AviAI logo"
+                width={200}
+                height={50}
+                className="mb-4"
+              />
+              <p className="text-xl font-bold mb-4">
+                Predicting Skies, Optimizing Flies
+              </p>
+              <div className="flex items-center">
+                <Phone size={18} className="mr-2 text-gray-600" />
+                <span className="text-lg">+81 69996699</span>
+              </div>
             </div>
-          </div>
 
-          {/* Resources */}
-          <div className="mb-8 md:mb-0">
-            <h3 className="font-bold text-xl mb-4">Resources</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className={`font-semibold text-base ${
-                    pathname === "/"
-                      ? "text-[#3758F9]"
-                      : "text-gray-700 hover:text-[#3758F9]"
-                  }`}
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/signed-in/flight-prices"
-                  className={`font-semibold text-base ${
-                    pathname === "/signed-in/flight-prices"
-                      ? "text-[#3758F9]"
-                      : "text-gray-700 hover:text-[#3758F9]"
-                  }`}
-                >
-                  Flight Prices
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/signed-in/flight-informations"
-                  className={`font-semibold text-base ${
-                    pathname === "/signed-in/flight-informations"
-                      ? "text-[#3758F9]"
-                      : "text-gray-700 hover:text-[#3758F9]"
-                  }`}
-                >
-                  Flight Information
-                </Link>
-              </li>
-            </ul>
+            {/* Resources */}
+            <div className="mb-8 md:mb-0">
+              <h3 className="font-bold text-xl mb-4">Resources</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/"
+                    className={`font-semibold text-base ${
+                      pathname === "/"
+                        ? "text-[#3758F9]"
+                        : "text-gray-700 hover:text-[#3758F9]"
+                    }`}
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/signed-in/flight-prices"
+                    className={`font-semibold text-base ${
+                      pathname === "/signed-in/flight-prices"
+                        ? "text-[#3758F9]"
+                        : "text-gray-700 hover:text-[#3758F9]"
+                    }`}
+                  >
+                    Flight Prices
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/signed-in/flight-informations"
+                    className={`font-semibold text-base ${
+                      pathname === "/signed-in/flight-informations"
+                        ? "text-[#3758F9]"
+                        : "text-gray-700 hover:text-[#3758F9]"
+                    }`}
+                  >
+                    Flight Information
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Social Media */}

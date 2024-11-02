@@ -1,3 +1,3 @@
 from .ICAOReader import ICAOReader
-
-__all__ = ["ICAOReader"]
+from .AirplaneCarrierReader import AirplaneCarrierReader
+__all__ = ["ICAOReader", "AirplaneCarrierReader"]

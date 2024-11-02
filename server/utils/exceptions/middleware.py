@@ -17,7 +17,7 @@ class ExceptionHandlerMiddleware(BaseHTTPMiddleware):
                 },
             )
         except Exception as e:
-            logger.exception(msg=e.__class__.__name__, args=e.args)
+            logger.exception(str(e))
             return JSONResponse(
                 status_code=500,
                 content={

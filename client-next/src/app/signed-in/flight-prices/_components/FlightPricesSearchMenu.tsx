@@ -36,7 +36,7 @@ import { useAction } from "next-safe-action/hooks";
 import { getDestinationsByRegionName } from "@/server/flight-prices/getDestionations";
 import { flightPricesSearchMenuSchema } from "@/server/flight-prices/schema";
 import { useRouter } from "next/navigation";
-import { processURLParams } from "@/lib/data/processDataHelper";
+import { processFlightPricesURLParams } from "@/lib/data/processDataHelper";
 
 function FlightPricesSearchMenu() {
   const form = useForm<z.infer<typeof flightPricesSearchMenuSchema>>({
@@ -67,11 +67,13 @@ function FlightPricesSearchMenu() {
   const debouncedFromQuery = useDebounce(fromQuery, 300);
   const debouncedToQuery = useDebounce(toQuery, 300);
 
-  const { executeAsync: fromSearchDestination, result: fromSearchResult } =
-    useAction(getDestinationsByRegionName);
+  const { executeAsync: fromSearchDestination } = useAction(
+    getDestinationsByRegionName
+  );
 
-  const { executeAsync: toSearchDestination, result: toSearchResult } =
-    useAction(getDestinationsByRegionName);
+  const { executeAsync: toSearchDestination } = useAction(
+    getDestinationsByRegionName
+  );
 
   const router = useRouter();
 
@@ -79,8 +81,10 @@ function FlightPricesSearchMenu() {
     async function searchFrom() {
       if (debouncedFromQuery) {
         setFromLoading(true);
-        await fromSearchDestination({ q: debouncedFromQuery });
-        if (fromSearchResult.data) {
+        const fromSearchResult = await fromSearchDestination({
+          q: debouncedFromQuery,
+        });
+        if (fromSearchResult && fromSearchResult.data) {
           setFromSuggestions(fromSearchResult.data);
           setShowFromSuggestions(true);
         }
@@ -97,8 +101,10 @@ function FlightPricesSearchMenu() {
     async function searchTo() {
       if (debouncedToQuery) {
         setToLoading(true);
-        await toSearchDestination({ q: debouncedToQuery });
-        if (toSearchResult.data) {
+        const toSearchResult = await toSearchDestination({
+          q: debouncedToQuery,
+        });
+        if (toSearchResult && toSearchResult.data) {
           setToSuggestions(toSearchResult.data);
           setShowToSuggestions(true);
         }
@@ -128,7 +134,7 @@ function FlightPricesSearchMenu() {
   };
 
   function onSubmit(values: z.infer<typeof flightPricesSearchMenuSchema>) {
-    const urlParams = processURLParams(values);
+    const urlParams = processFlightPricesURLParams(values);
     router.push(`/signed-in/flight-prices/prices?${urlParams}`);
   }
 

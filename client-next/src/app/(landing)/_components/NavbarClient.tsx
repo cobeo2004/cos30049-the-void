@@ -8,16 +8,7 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import AvatarDropdown from "./AvatarDropdown";
 import Logo from "@/assets/images/image.png";
 import { LoginResult } from "@/types";
-import {
-  Menu,
-  Home,
-  Plane,
-  Info,
-  User,
-  Settings,
-  HelpCircle,
-  LogOut,
-} from "lucide-react";
+import { Menu, Home, Plane, Info, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,7 +95,7 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+            <DropdownMenuLabel>AviAI</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <NavLink href="/" icon={Home}>
@@ -123,23 +114,6 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
             </DropdownMenuItem>
             {session?.user ? (
               <>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Account</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                  <Link href="/profile" className="flex items-center">
-                    <User className="mr-2 h-4 w-4" /> Edit Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings" className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" /> Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/help" className="flex items-center">
-                    <HelpCircle className="mr-2 h-4 w-4" /> Help
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={async () => await logOut()}
