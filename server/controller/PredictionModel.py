@@ -1,5 +1,4 @@
-from typing_extensions import Annotated, Doc
-import pickle
+from models.Predict import PredictRequestModel
 
 
 class Controller:
@@ -9,7 +8,6 @@ class Controller:
 
     async def make_prediction(
         self,
-        # data: Annotated[any, Doc("The data to make a prediction on")]
+        data: PredictRequestModel
     ):
-        # return self.model.predict(data)
-        return {"message": "Hello World"}
+        return {"data": data}

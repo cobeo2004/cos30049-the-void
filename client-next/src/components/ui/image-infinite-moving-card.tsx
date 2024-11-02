@@ -92,7 +92,7 @@ export const InfiniteMovingCards = ({
             height={1}
             src={item.href}
             alt={item.href}
-            className=" relative rounded-2xl  object-contain opacity-50 bg-black"
+            className=" relative rounded-2xl  object-contain opacity-50 bg-transparent"
             key={item.href}
           />
         ))}

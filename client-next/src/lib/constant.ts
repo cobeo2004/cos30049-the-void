@@ -1,4 +1,4 @@
-export const clientsImages = (numberOfClients: number = 10) =>
+export const clientsImages = (numberOfClients: number = 14) =>
   [...new Array(numberOfClients)].map((client, index) => ({
     href: `/${index + 1}.png`,
   }));
