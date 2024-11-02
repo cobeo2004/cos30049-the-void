@@ -1,14 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import Plot from "react-plotly.js";
 import { PredictSeasonalityData } from "@/types";
 
 interface SeasonalityChartProps {
@@ -55,30 +47,43 @@ export const SeasonalityChart: React.FC<SeasonalityChartProps> = ({
       </CardHeader>
       <CardContent className="pt-6">
         <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="demand"
-                stackId="1"
-                stroke="#8b5cf6"
-                fill="#8b5cf6"
-                fillOpacity={0.3}
-              />
-              <Area
-                type="monotone"
-                dataKey="price"
-                stackId="2"
-                stroke="#06b6d4"
-                fill="#06b6d4"
-                fillOpacity={0.3}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <Plot
+            data={[
+              {
+                x: chartData.map((d) => d!.month),
+                y: chartData.map((d) => d!.demand),
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Demand",
+                fill: "tozeroy",
+                line: { color: "#8b5cf6" },
+              },
+              {
+                x: chartData.map((d) => d!.month),
+                y: chartData.map((d) => d!.price),
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Price",
+                yaxis: "y2",
+                line: { color: "#06b6d4" },
+              },
+            ]}
+            layout={{
+              autosize: true,
+              margin: { l: 50, r: 50, t: 20, b: 40 },
+              showlegend: true,
+              legend: { orientation: "h", y: -0.2 },
+              xaxis: { title: "Month" },
+              yaxis: { title: "Demand Index" },
+              yaxis2: {
+                title: "Price (AUD)",
+                overlaying: "y",
+                side: "right",
+              },
+            }}
+            style={{ width: "100%", height: 300 }}
+            config={{ responsive: true }}
+          />
         </div>
       </CardContent>
     </Card>

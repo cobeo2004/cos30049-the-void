@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Literal
 
 class PredictRequestModel(BaseModel):
     Departure_date: str
@@ -8,5 +9,5 @@ class PredictRequestModel(BaseModel):
     airline: str
     departure_city: str
     arrival_city: str
-    Stops: str = "direct"
+    Stops: Literal["direct", "one", "two"] = "direct"
 

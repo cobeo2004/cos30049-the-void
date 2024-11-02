@@ -1,14 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import Plot from "react-plotly.js";
 import { PredictTrendData } from "@/types";
 
 interface PriceTrendChartProps {
@@ -55,27 +47,42 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({
       </CardHeader>
       <CardContent className="pt-6">
         <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="price"
-                stroke="#2563eb"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="predicted"
-                stroke="#10b981"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <Plot
+            data={[
+              {
+                x: chartData.map((d) => d!.month),
+                y: chartData.map((d) => d!.price),
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Actual Price",
+                line: { color: "#2563eb" },
+              },
+              {
+                x: chartData.map((d) => d!.month),
+                y: chartData.map((d) => d!.predicted),
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Predicted Price",
+                line: { color: "#10b981", dash: "dash" },
+              },
+            ]}
+            layout={{
+              autosize: true,
+              margin: { l: 50, r: 20, t: 20, b: 80 },
+              showlegend: true,
+              legend: {
+                orientation: "h",
+                yanchor: "bottom",
+                y: -0.4,
+                xanchor: "center",
+                x: 0.5,
+              },
+              xaxis: { title: "Month" },
+              yaxis: { title: "Price (AUD)" },
+            }}
+            style={{ width: "100%", height: 300 }}
+            config={{ responsive: true }}
+          />
         </div>
       </CardContent>
     </Card>

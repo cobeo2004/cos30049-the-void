@@ -1,6 +1,7 @@
 import { MeteorCard } from "./MeteorCard";
-
+import { useRouter } from "next/navigation";
 export default function ExploreLatestProduct() {
+  const router = useRouter();
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#FFF8F8] from-0% via-[#8BDFFF] via-53% to-[#18BFFF] py-20 flex items-center justify-center">
       <div className="max-w-6xl w-full mx-auto px-4">
@@ -12,13 +13,17 @@ export default function ExploreLatestProduct() {
             title="Flight Prices"
             description="Explore the best flight prices and book your next flight with ease."
             buttonText="Explore"
-            buttonFunction={() => {}}
+            buttonFunction={() => {
+              router.push("/signed-in/flight-prices");
+            }}
           />
           <MeteorCard
             title="Flight Information"
             description="Analyze the flight information and predict the delays."
             buttonText="Explore"
-            buttonFunction={() => {}}
+            buttonFunction={() => {
+              router.push("/signed-in/flight-informations");
+            }}
           />
         </div>
       </div>

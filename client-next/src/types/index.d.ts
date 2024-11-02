@@ -51,3 +51,87 @@ export declare interface PredictResults {
   distributionData: Array<PredictDistributionData | null>;
   seasonalityData: Array<PredictSeasonalityData | null>;
 }
+
+declare type SerpSearchMetadata = {
+  id: string;
+  status: string;
+  json_endpoint: string;
+  created_at: string;
+  processed_at: string;
+  google_flights_url: string;
+  raw_html_file: string;
+  prettify_html_file: string;
+  total_time_taken: number;
+};
+
+declare type SerpSearchParameters = {
+  engine: string;
+  hl: string;
+  gl: string;
+  departure_id: string;
+  arrival_id: string;
+  outbound_date: string;
+  return_date: string;
+  currency: string;
+};
+
+declare type SerpFlight = {
+  departure_airport: {
+    name: string;
+    id: string;
+    time: string;
+  };
+  arrival_airport: {
+    name: string;
+    id: string;
+    time: string;
+  };
+  duration: number;
+  airplane: string;
+  airline: string;
+  airline_logo: string;
+  travel_class: string;
+  flight_number: string;
+  legroom: string;
+  extensions: Array<string>;
+  often_delayed_by_over_30_min?: boolean;
+};
+
+declare type SerpBestFlight = {
+  flights: Array<SerpFlight>;
+  total_duration: number;
+  carbon_emissions: {
+    this_flight: number;
+    typical_for_this_route: number;
+    difference_percent: number;
+  };
+  price: number;
+  type: string;
+  airline_logo: string;
+  extensions: Array<string>;
+  departure_token: string;
+};
+
+declare type SerpAirportDetail = {
+  airport: {
+    id: string;
+    name: string;
+  };
+  city: string;
+  country: string;
+  country_code: string;
+  image: string;
+  thumbnail: string;
+};
+
+declare type SerpAirport = {
+  departure: Array<SerpAirportDetail>;
+  arrival: Array<SerpAirportDetail>;
+};
+
+export declare type SerpResponse = {
+  search_metadata: SerpSearchMetadata;
+  search_parameters: SerpSearchParameters;
+  best_flights: Array<SerpBestFlight>;
+  airports: Array<SerpAirport>;
+};

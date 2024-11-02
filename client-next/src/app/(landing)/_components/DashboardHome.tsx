@@ -81,7 +81,7 @@ export function DashboardHome() {
         </div>
       </div>
       <ExploreLatestProduct />
-      <Footer />
+      <Footer bgColor="bg-gradient-to-t from-[#FFFFFF] via-[#D0F0FD] to-[#18BFFF]" />
     </>
   );
 }

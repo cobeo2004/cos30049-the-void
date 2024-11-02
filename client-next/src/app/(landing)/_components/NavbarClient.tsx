@@ -46,7 +46,9 @@ const NavLink = ({
     <Link
       href={href}
       className={`flex items-center px-3 py-2 rounded-md transition-colors ${
-        isActive ? "bg-primary text-primary-foreground" : "hover:bg-primary/10"
+        isActive
+          ? "bg-gradient-to-t from-[#8BDFFF] from-0% via-[#18BFFF] via-53% to-[#0B76B7] to-100% text-primary-foreground"
+          : "hover:bg-gradient-to-t hover:from-[#8BDFFF] hover:from-0% hover:via-[#18BFFF] hover:via-53% hover:to-[#0B76B7] hover:to-100%"
       }`}
     >
       <Icon className="mr-2 h-4 w-4" />
@@ -79,7 +81,7 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
           Flight Prices
         </NavLink>
         <NavLink href="/signed-in/flight-informations" icon={Info}>
-          Flight Information
+          Price Predictions
         </NavLink>
       </ul>
       <div className="hidden md:block">
@@ -116,7 +118,7 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <NavLink href="/signed-in/flight-informations" icon={Info}>
-                Flight Information
+                Price Predictions
               </NavLink>
             </DropdownMenuItem>
             {session?.user ? (

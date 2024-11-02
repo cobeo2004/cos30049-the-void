@@ -1,14 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import Plot from "react-plotly.js";
 import { PredictDistributionData } from "@/types";
 
 interface PriceDistributionChartProps {
@@ -53,15 +45,25 @@ export const PriceDistributionChart: React.FC<PriceDistributionChartProps> = ({
       </CardHeader>
       <CardContent className="pt-6">
         <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="range" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
+          <Plot
+            data={[
+              {
+                x: chartData.map((d) => d!.range),
+                y: chartData.map((d) => d!.count),
+                type: "bar",
+                marker: { color: "#3b82f6" },
+              },
+            ]}
+            layout={{
+              autosize: true,
+              margin: { l: 50, r: 20, t: 20, b: 40 },
+              showlegend: false,
+              xaxis: { title: "Price Range (AUD)" },
+              yaxis: { title: "Number of Flights" },
+            }}
+            style={{ width: "100%", height: 300 }}
+            config={{ responsive: true }}
+          />
         </div>
       </CardContent>
     </Card>

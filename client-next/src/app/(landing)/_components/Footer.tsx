@@ -6,12 +6,19 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "@/assets/images/image.png";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import UpgradingAlert from "./UpgradingAlert";
 
-const Footer: React.FC = () => {
+const Footer: React.FC<{ bgColor?: string; className?: string }> = ({
+  bgColor,
+  className,
+}) => {
   const pathname = usePathname();
+  const [showAlert, setShowAlert] = useState(false);
 
   return (
-    <footer className="bg-gradient-to-t from-[#FFFFFF] via-[#D0F0FD] to-[#18BFFF] text-gray-800 py-12">
+    <footer className={cn("text-gray-800 py-12", bgColor, className)}>
       <div className="container mx-auto px-4">
         <div className="flex flex-row md:flex-row justify-between items-start">
           {/* Logo and Company Info */}
@@ -50,9 +57,9 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/flight-prices"
+                  href="/signed-in/flight-prices"
                   className={`font-semibold text-base ${
-                    pathname === "/flight-prices"
+                    pathname === "/signed-in/flight-prices"
                       ? "text-[#3758F9]"
                       : "text-gray-700 hover:text-[#3758F9]"
                   }`}
@@ -62,9 +69,9 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/flight-information"
+                  href="/signed-in/flight-informations"
                   className={`font-semibold text-base ${
-                    pathname === "/flight-information"
+                    pathname === "/signed-in/flight-informations"
                       ? "text-[#3758F9]"
                       : "text-gray-700 hover:text-[#3758F9]"
                   }`}
@@ -79,30 +86,30 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-bold text-xl mb-4">Follow Us On</h3>
             <div className="flex space-x-4 mb-6">
-              <Link
-                href="#"
+              <button
+                onClick={() => setShowAlert(true)}
                 className="bg-white p-2 rounded-full border border-gray-300 hover:bg-blue-50"
               >
                 <Facebook size={24} className="text-[#3B5998]" />
-              </Link>
-              <Link
-                href="#"
+              </button>
+              <button
+                onClick={() => setShowAlert(true)}
                 className="bg-white p-2 rounded-full border border-gray-300 hover:bg-blue-50"
               >
                 <Twitter size={24} className="text-[#1DA1F2]" />
-              </Link>
-              <Link
-                href="#"
+              </button>
+              <button
+                onClick={() => setShowAlert(true)}
                 className="bg-white p-2 rounded-full border border-gray-300 hover:bg-blue-50"
               >
                 <Youtube size={24} className="text-[#FF0000]" />
-              </Link>
-              <Link
-                href="#"
+              </button>
+              <button
+                onClick={() => setShowAlert(true)}
                 className="bg-white p-2 rounded-full border border-gray-300 hover:bg-blue-50"
               >
                 <Linkedin size={24} className="text-[#0A66C2]" />
-              </Link>
+              </button>
             </div>
             {/* Copyright */}
             <div className="text-left mt-8 text-sm text-gray-600">
@@ -111,6 +118,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+      <UpgradingAlert showAlert={showAlert} setShowAlert={setShowAlert} />
     </footer>
   );
 };

@@ -21,15 +21,12 @@ export const getDestinationsByRegionName = authAction
     try {
       const destinations = await authFetch<
         Array<GetDestinationsByRegionNameReturnValue>
-      >(
-        `${API_URL}/flight-prices/destinations?region_name=${parsedInput.region_name}`,
-        {
-          options: {
-            method: "GET",
-          },
-          ctx,
-        }
-      );
+      >(`${API_URL}/flight-prices/destinations/search?q=${parsedInput.q}`, {
+        options: {
+          method: "GET",
+        },
+        ctx,
+      });
       return destinations;
     } catch (error) {
       throw new Error((error as Error).message);
