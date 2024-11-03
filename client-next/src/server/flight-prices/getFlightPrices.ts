@@ -45,6 +45,7 @@ export const getFlightPrices = authAction
               infants_on_lap: infants,
             };
 
+      console.log(body);
       // return await authFetch<SerpResponse>(`${API_URL}/flight-prices`, {
       //   options: {
       //     method: "POST",

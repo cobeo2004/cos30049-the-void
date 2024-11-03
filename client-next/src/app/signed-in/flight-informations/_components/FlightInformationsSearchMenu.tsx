@@ -9,13 +9,11 @@ import * as z from "zod";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { TimePicker } from "@/components/time-picker/time-picker";
 import {
   Form,
   FormControl,
@@ -39,6 +37,7 @@ import { getAllAirlines } from "@/server/flight-informations/getAllAirlines";
 import { flightInformationsSearchMenuSchema } from "@/server/flight-informations/schema";
 import { processFlightInformationsURLParams } from "@/lib/data/processDataHelper";
 import { useRouter } from "next/navigation";
+import { DateTimePicker } from "@/components/time-picker/date-time-picker";
 
 function FlightInformationsSearchMenu() {
   const router = useRouter();
@@ -276,40 +275,14 @@ function FlightInformationsSearchMenu() {
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormLabel>Depart</FormLabel>
-                    <Popover>
-                      <FormControl>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP HH:mm:ss")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                      </FormControl>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                        <div className="p-3 border-t border-border">
-                          <TimePicker
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        hourCycle={24}
+                        placeholder="Pick departure date & time"
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
@@ -320,40 +293,14 @@ function FlightInformationsSearchMenu() {
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormLabel>Arrive</FormLabel>
-                    <Popover>
-                      <FormControl>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP HH:mm:ss")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                      </FormControl>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                        <div className="p-3 border-t border-border">
-                          <TimePicker
-                            setDate={field.onChange}
-                            date={field.value}
-                          />
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        hourCycle={24}
+                        placeholder="Pick arrival date & time"
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />

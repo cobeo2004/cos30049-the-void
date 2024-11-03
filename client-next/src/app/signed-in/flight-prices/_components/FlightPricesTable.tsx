@@ -19,9 +19,10 @@ import { useSearchParams } from "next/navigation";
 export const FlightPricesTable: React.FC = () => {
   const searchParams = useSearchParams();
   const {
-    result: { data: flights },
+    result: { data: flights, serverError },
     isExecuting: loading,
     executeAsync,
+    hasErrored,
   } = useAction(getFlightPrices);
 
   useEffect(() => {
@@ -48,6 +49,45 @@ export const FlightPricesTable: React.FC = () => {
     };
     doFetching();
   }, [executeAsync]);
+
+  if (hasErrored || serverError) {
+    return (
+      <div className="container mx-auto p-4 flex items-center justify-center min-h-[400px]">
+        <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+          <div className="text-center space-y-6">
+            <div className="w-20 h-20 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+              <svg
+                className="w-10 h-10 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Oops!</h2>
+            <h3 className="text-lg font-medium text-gray-800">
+              <span className="text-red-600">Error:</span> Something went wrong
+            </h3>
+            <p className="text-gray-600">
+              {serverError || "An error occurred while fetching flight prices"}
+            </p>
+            <Link href="/signed-in/flight-prices">
+              <Button className="mt-8 bg-gradient-to-t from-[#8BDFFF] from-0% via-[#18BFFF] via-53% to-[#0B76B7] to-100% text-primary-foreground">
+                Try Again
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg p-6">

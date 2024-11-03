@@ -1,12 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  TrendingUp,
-  DollarSign,
-  Calendar,
-  ArrowUpRight,
-  Clock,
-} from "lucide-react";
+import { TrendingUp, DollarSign, ArrowUpRight, Clock } from "lucide-react";
 import { PredictStatistics } from "@/types";
 
 interface PriceStatisticsProps {

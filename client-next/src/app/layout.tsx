@@ -28,6 +28,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   await ping();
+  console.log("NODE_ENV", process.env.CHECK_ENV);
   unstable_noStore();
   revalidatePath("/");
   return (
@@ -35,7 +36,6 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <QueryProvider>{children}</QueryProvider> */}
         {children}
         <Toaster position="top-center" />
       </body>
