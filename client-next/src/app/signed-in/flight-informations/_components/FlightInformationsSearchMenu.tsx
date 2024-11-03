@@ -1,19 +1,23 @@
+/**
+ * @file FlightInformationsSearchMenu.tsx
+ * @author
+ * Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+ * @description React component for searching flight information with advanced filters and date pickers.
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plane, ArrowRightLeft, Calendar as CalendarIcon } from "lucide-react";
+// Import icons from lucide-react library
+import { Plane, ArrowRightLeft } from "lucide-react";
+// Import type definitions for destination data
 import { GetDestinationsByRegionNameReturnValue } from "@/server/flight-prices/getDestionations";
+// Import form handling and validation libraries
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+// Import utility functions and components
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Form,
   FormControl,
@@ -32,15 +36,19 @@ import {
 import { useDebounce } from "@/hooks/useDebounce";
 import LoadingComponent from "@/app/(auth)/_components/loading";
 import { useAction } from "next-safe-action/hooks";
+// Import server actions for fetching data
 import { getDestinationsByRegionName } from "@/server/flight-prices/getDestionations";
 import { getAllAirlines } from "@/server/flight-informations/getAllAirlines";
+// Import validation schema and helper functions
 import { flightInformationsSearchMenuSchema } from "@/server/flight-informations/schema";
 import { processFlightInformationsURLParams } from "@/lib/data/processDataHelper";
 import { useRouter } from "next/navigation";
 import { DateTimePicker } from "@/components/time-picker/date-time-picker";
 
 function FlightInformationsSearchMenu() {
+  // Initialize Next.js router for navigation
   const router = useRouter();
+  // Initialize form with validation using react-hook-form and zod
   const form = useForm<z.infer<typeof flightInformationsSearchMenuSchema>>({
     resolver: zodResolver(flightInformationsSearchMenuSchema),
     defaultValues: {
@@ -48,6 +56,7 @@ function FlightInformationsSearchMenu() {
     },
   });
 
+  // State variables for managing form inputs and suggestions
   const [fromQuery, setFromQuery] = useState("");
   const [toQuery, setToQuery] = useState("");
   const [fromSuggestions, setFromSuggestions] = useState<
@@ -64,9 +73,11 @@ function FlightInformationsSearchMenu() {
   const [fromSelected, setFromSelected] = useState(false);
   const [toSelected, setToSelected] = useState(false);
 
+  // Debounce the input queries to avoid excessive API calls
   const debouncedFromQuery = useDebounce(fromQuery, 300);
   const debouncedToQuery = useDebounce(toQuery, 300);
 
+  // Initialize server actions for fetching destinations and airlines
   const { executeAsync: fromSearchDestination } = useAction(
     getDestinationsByRegionName
   );
@@ -75,6 +86,7 @@ function FlightInformationsSearchMenu() {
   );
   const { executeAsync: fetchAirlines } = useAction(getAllAirlines);
 
+  // Fetch the list of airlines on component mount
   useEffect(() => {
     const loadAirlines = async () => {
       const result = await fetchAirlines();
@@ -85,6 +97,7 @@ function FlightInformationsSearchMenu() {
     loadAirlines();
   }, []);
 
+  // Effect to search for departure airports based on user input
   useEffect(() => {
     async function searchFrom() {
       if (debouncedFromQuery) {
@@ -98,6 +111,7 @@ function FlightInformationsSearchMenu() {
         }
         setFromLoading(false);
       } else {
+        // Clear suggestions if query is empty
         setFromSuggestions([]);
         setShowFromSuggestions(false);
       }
@@ -105,6 +119,7 @@ function FlightInformationsSearchMenu() {
     searchFrom();
   }, [debouncedFromQuery]);
 
+  // Effect to search for arrival airports based on user input
   useEffect(() => {
     async function searchTo() {
       if (debouncedToQuery) {
@@ -118,6 +133,7 @@ function FlightInformationsSearchMenu() {
         }
         setToLoading(false);
       } else {
+        // Clear suggestions if query is empty
         setToSuggestions([]);
         setShowToSuggestions(false);
       }
@@ -125,6 +141,7 @@ function FlightInformationsSearchMenu() {
     searchTo();
   }, [debouncedToQuery]);
 
+  // Handle selection of a departure airport from suggestions
   const handleFromSelect = (
     airport: GetDestinationsByRegionNameReturnValue
   ) => {
@@ -134,6 +151,7 @@ function FlightInformationsSearchMenu() {
     setFromSelected(true);
   };
 
+  // Handle selection of an arrival airport from suggestions
   const handleToSelect = (airport: GetDestinationsByRegionNameReturnValue) => {
     form.setValue("to", airport);
     setToQuery(airport.airport);
@@ -141,23 +159,29 @@ function FlightInformationsSearchMenu() {
     setToSelected(true);
   };
 
+  // Handle form submission
   const onSubmit = (
     values: z.infer<typeof flightInformationsSearchMenuSchema>
   ) => {
+    // Process form values into URL parameters
     const url = processFlightInformationsURLParams(values);
+    // Navigate to the predictions page with query parameters
     router.push(`/signed-in/flight-informations/predictions?${url}`);
   };
 
   return (
     <div className="max-h-screen h-[90vh] flex flex-col items-center justify-center p-4">
+      {/* Header with title */}
       <header className="w-full max-w-4xl mb-8 text-center">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-[#0B76B7] to-[#1C5BD9] bg-clip-text text-transparent">
           Utilize AI and see the best flight for your trip.
         </h1>
       </header>
+      {/* Main content area with the search form */}
       <main className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Row for 'From' and 'To' airport inputs */}
             <div className="flex space-x-4">
               <div className="flex-1 relative">
                 <FormField
@@ -168,6 +192,7 @@ function FlightInformationsSearchMenu() {
                       <FormLabel>From</FormLabel>
                       <FormControl>
                         <div className="relative">
+                          {/* Plane icon inside the input field */}
                           <Plane
                             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                             size={20}
@@ -185,6 +210,7 @@ function FlightInformationsSearchMenu() {
                             }}
                             className="pl-10"
                           />
+                          {/* Loading indicator while fetching suggestions */}
                           {fromLoading && (
                             <LoadingComponent
                               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -193,6 +219,7 @@ function FlightInformationsSearchMenu() {
                           )}
                         </div>
                       </FormControl>
+                      {/* Display suggestions dropdown if available */}
                       {!fromSelected &&
                         showFromSuggestions &&
                         fromSuggestions.length > 0 && (
@@ -222,6 +249,7 @@ function FlightInformationsSearchMenu() {
                       <FormLabel>To</FormLabel>
                       <FormControl>
                         <div className="relative">
+                          {/* Plane icon inside the input field */}
                           <Plane
                             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                             size={20}
@@ -239,6 +267,7 @@ function FlightInformationsSearchMenu() {
                             }}
                             className="pl-10"
                           />
+                          {/* Loading indicator while fetching suggestions */}
                           {toLoading && (
                             <LoadingComponent
                               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -247,6 +276,7 @@ function FlightInformationsSearchMenu() {
                           )}
                         </div>
                       </FormControl>
+                      {/* Display suggestions dropdown if available */}
                       {!toSelected &&
                         showToSuggestions &&
                         toSuggestions.length > 0 && (
@@ -268,6 +298,7 @@ function FlightInformationsSearchMenu() {
               </div>
             </div>
 
+            {/* Row for date and time pickers */}
             <div className="flex space-x-4">
               <FormField
                 control={form.control}
@@ -276,6 +307,7 @@ function FlightInformationsSearchMenu() {
                   <FormItem className="flex-1">
                     <FormLabel>Depart</FormLabel>
                     <FormControl>
+                      {/* Date and time picker for departure */}
                       <DateTimePicker
                         value={field.value}
                         onChange={field.onChange}
@@ -294,6 +326,7 @@ function FlightInformationsSearchMenu() {
                   <FormItem className="flex-1">
                     <FormLabel>Arrive</FormLabel>
                     <FormControl>
+                      {/* Date and time picker for arrival */}
                       <DateTimePicker
                         value={field.value}
                         onChange={field.onChange}
@@ -306,6 +339,7 @@ function FlightInformationsSearchMenu() {
               />
             </div>
 
+            {/* Row for number of stops and preferred airline */}
             <div className="flex space-x-4">
               <FormField
                 control={form.control}
@@ -323,6 +357,7 @@ function FlightInformationsSearchMenu() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        {/* Options for number of stops */}
                         <SelectItem value="direct">Direct Flight</SelectItem>
                         <SelectItem value="1">One Stop</SelectItem>
                         <SelectItem value="2">Two Stops</SelectItem>
@@ -345,6 +380,7 @@ function FlightInformationsSearchMenu() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        {/* Dynamically generated list of airlines */}
                         {airlines.map((airline) => (
                           <SelectItem key={airline} value={airline}>
                             {airline}
@@ -357,6 +393,7 @@ function FlightInformationsSearchMenu() {
               />
             </div>
 
+            {/* Submit button to start prediction */}
             <Button
               type="submit"
               className="w-full bg-gradient-to-t from-[#8BDFFF] from-0% via-[#18BFFF] via-53% to-[#0B76B7] to-100% text-primary-foreground"
