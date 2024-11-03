@@ -46,20 +46,134 @@ Welcome to our project! In this repository, we will be working on an exciting an
 
 ## Setup Instructions
 
+### Setting up `Docker` and `PostgreSQL`
+
+- Install [`Docker`](https://docs.docker.com/engine/install/) and [`docker-compose`](https://docs.docker.com/compose/install/)
+- For using `PostgreSQL` with `Docker` instance, simply run the following command:
+
+  ```sh
+  docker run --name <Your instance name> -e POSTGRES_PASSWORD=<your-passowrd> -d postgres
+  ```
+
+- For using `PostgreSQL` with `docker-compose`, simply running the following command:
+
+  ```sh
+  # Change the directory to the server folder
+  cd server
+  # Run the pre-configured docker-compose.yml
+  docker-compose -d up -f docker-compose.yml
+  ```
+
+- However, you can configure your own `docker-compose` with the following template:
+
+  ```yml
+  # docker-compose template for PostgreSQL
+  # See: https://hub.docker.com/_/postgres
+
+  # Depreacated, remove it to avoid conflictions !
+  version: "3.8"
+
+  services:
+    postgres:
+      image: postgres
+      restart: always
+      # Optional, could be your own name
+      container_name: <Your Container Name>
+      shm_size: 128mb # Could be your optional size
+      ports:
+        - 5432:5432
+      environment:
+        POSTGRES_DB: <Your database>
+        POSTGRES_USER: <Your username>
+        POSTGRES_PASSWORD: <Your password>
+
+      volumes:
+        - postgresql_db:<Your own volume directory>
+
+      networks:
+        - postgresql_networks
+
+  volumes:
+    postgresql_db:
+
+  networks:
+    postgresql_networks:
+  ```
+
+### Setting up `Prisma` and `Prisma for Python`
+
+- Install `Prisma` using `pip`:
+
+  ```sh
+  pip install -U prisma
+  # Or using the requirements.txt
+  pip install -r requirements.txt -U
+  ```
+
+- Add a `.env` file with the following configuration (Not required as there are .env provided in the submission):
+
+  ```env
+  DATABASE_URL=postgresql://username:password@localhost:5432/database?schema=public
+  ```
+
+- To **migrate** the database:
+
+  ```sh
+  prisma migrate dev --name "init"
+  ```
+
+- To **push** the database for synchronization:
+
+  ```sh
+  prisma db push
+  ```
+
+- To **generate** the `Prisma client for Python`:
+
+  ```sh
+  prisma generate
+  ```
+
+- Usage:
+
+  ```py
+  # Example from Prisma Client Python
+  # See: https://prisma-client-py.readthedocs.io/en/stable/
+  # Note: This is for reference only !
+
+  import asyncio
+  from prisma import Prisma
+
+  async def main() -> None:
+      prisma = Prisma()
+      await prisma.connect()
+
+      post = await prisma.post.find_many()
+
+      await prisma.disconnect()
+      print(post)
+
+  if __name__ == '__main__':
+      asyncio.run(main())
+  ```
+
 ### Back-end Setup (FastAPI)
 
-1. **Prerequisite**: Ensure that you have successfully bootstrapped your server and that it is running at `http://localhost:8000`.
-2. Change to the `server` directory.
-3. Install the required packages:
+1. Change to the `server` directory.
+2. Install the required packages:
    ```sh
    pip install -r requirements.txt
    ```
-4. Start the FastAPI server:
+3. Start the FastAPI server:
    ```sh
    python main.py
    ```
 
+- Voila, now your server is running and will be served (by default) at: http://localhost:8000.
+
 ### Front-end Setup (Next.js)
+
+- **Prerequisite**: Ensure that you have successfully bootstrapped your server and that it is running at `http://localhost:8000`.
 
 1. Change to the `client-next` directory.
 2. Install all of the required packages:
