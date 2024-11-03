@@ -1,3 +1,10 @@
+/**
+ * @file FlightPricesSearchMenu.tsx
+ * @author Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+ * @description A comprehensive search form component for flight prices that handles
+ * user inputs for flight searches including origin, destination, dates, and passenger counts
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";

@@ -1,3 +1,9 @@
+/**
+ * @file signup/page.tsx
+ * @author Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+ * @description This file contains the implementation of the signup page for the AviAI application.
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -34,7 +40,9 @@ import { useAction } from "next-safe-action/hooks";
 import { signUp } from "@/server/auth/signUp";
 
 export default function Signup() {
+  // Initialize the router for navigation
   const router = useRouter();
+  // Initialize the form with default values and schema validation
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -46,57 +54,35 @@ export default function Signup() {
     },
   });
 
-  // const signupMutation = useMutation({
-  //   mutationFn: async (values: z.infer<typeof signupSchema>) => {
-  //     const response = await fetch("/api/auth/signup", {
-  //       method: "POST",
-  //       body: JSON.stringify(values),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     if (!response.ok || response.status !== 200) {
-  //       throw new Error(`${response.statusText}`);
-  //     }
-  //     return response;
-  //   },
-  //   onMutate: () => {
-  //     toast.loading("Signing up...");
-  //   },
-  //   onSuccess: () => {
-  //     router.prefetch("/");
-  //     router.push("/");
-  //     toast.dismiss();
-  //   },
-  //   onError: () => {
-  //     toast.dismiss();
-  //     toast.error("Signup failed");
-  //   },
-  //   onSettled: () => {
-  //     toast.dismiss();
-  //   },
-  // });
+  // Utilize the useAction hook to manage the state of the signUp action
   const signUpMutation = useAction(signUp, {
     onExecute: () => {
+      // Display a loading toast when the signup action is executed
       toast.loading("Signing up...");
     },
     onSuccess: () => {
+      // After successful signup, prefetch the home page and redirect the user
       router.prefetch("/");
       router.push("/");
       toast.dismiss();
     },
     onError: () => {
+      // Display an error message if signup fails
       toast.dismiss();
       toast.error("Signup failed");
     },
     onSettled: () => {
+      // Dismiss the loading toast when the action is settled
       toast.dismiss();
     },
   });
+
+  // Function to handle form submission by executing the signUp action
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     await signUpMutation.executeAsync(values);
   };
 
+  // Extract the signup error from the result
   const loginErr =
     signUpMutation.result.serverError ||
     signUpMutation.result.validationErrors ||

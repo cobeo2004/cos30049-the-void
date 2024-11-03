@@ -1,3 +1,10 @@
+/**
+ * @file NavbarClient.tsx
+ * @author Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+ * @description Client-side navigation component that handles user authentication state
+ * and provides navigation links for both desktop and mobile views
+ */
+
 "use client";
 
 import React from "react";
@@ -20,6 +27,7 @@ import {
 import { logOut } from "@/server/auth/logout";
 import { Button } from "@/components/ui/button";
 
+// NavLink component for consistent link styling and active state handling
 const NavLink = ({
   href,
   icon: Icon,
@@ -30,7 +38,7 @@ const NavLink = ({
   children: React.ReactNode;
 }) => {
   const pathname = usePathname();
-  // Change the isActive check to handle nested routes
+  // Check if current path matches the link or is a sub-route
   const isActive = pathname === href || pathname.startsWith(href + "/");
 
   return (
@@ -51,6 +59,7 @@ const NavLink = ({
 export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
   const router = useRouter();
 
+  // Refresh the page when session changes to null
   React.useEffect(() => {
     if (session === null) {
       router.refresh();
@@ -59,11 +68,12 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
 
   return (
     <nav className="flex justify-between items-center p-4 bg-background text-foreground shadow-md border-b border-border relative">
+      {/* Logo and brand link */}
       <Link href="/" className="flex items-center">
         <Image src={Logo} alt="AviAI Logo" width={150} height={150} />
       </Link>
 
-      {/* Desktop view */}
+      {/* Desktop navigation links */}
       <ul className="hidden md:flex space-x-4">
         <NavLink href="/" icon={Home}>
           Home
@@ -75,6 +85,8 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
           Price Predictions
         </NavLink>
       </ul>
+
+      {/* Desktop authentication section */}
       <div className="hidden md:block">
         {session?.user ? (
           <AvatarDropdown user={session.user} />
@@ -85,18 +97,22 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
         )}
       </div>
 
-      {/* Mobile view */}
+      {/* Mobile navigation menu */}
       <div className="md:hidden flex items-center">
         <DropdownMenu>
+          {/* Mobile menu trigger button */}
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="mr-2">
               <Menu className="h-6 w-6" />
               <span className="sr-only">Open menu</span>
             </Button>
           </DropdownMenuTrigger>
+
+          {/* Mobile menu content */}
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>AviAI</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {/* Mobile navigation links */}
             <DropdownMenuItem asChild>
               <NavLink href="/" icon={Home}>
                 Home
@@ -112,6 +128,8 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
                 Price Predictions
               </NavLink>
             </DropdownMenuItem>
+
+            {/* Mobile authentication section */}
             {session?.user ? (
               <>
                 <DropdownMenuSeparator />
@@ -131,6 +149,7 @@ export const NavbarClient = ({ session }: { session: LoginResult | null }) => {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* Show avatar dropdown in mobile view if user is logged in */}
         {session?.user && <AvatarDropdown user={session.user} />}
       </div>
     </nav>

@@ -1,3 +1,10 @@
+/**
+ * @file FlightPricesTable.tsx
+ * @author Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+ * @description Component for displaying flight search results in a table format
+ * with booking functionality and responsive design
+ */
+
 "use client";
 import React, { useEffect, useState } from "react";
 import { FlightCardSkeleton } from "./FlightCardSkeleton";

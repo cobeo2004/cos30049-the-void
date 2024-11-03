@@ -1,3 +1,9 @@
+/**
+ * @file login/page.tsx
+ * @author Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+ * @description This file contains the implementation of the login page for the AviAI application.
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -34,6 +40,7 @@ import { signIn } from "@/server/auth/signIn";
 
 export default function Login() {
   const router = useRouter();
+  // Initialize the form with default values and schema validation
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -42,29 +49,35 @@ export default function Login() {
     },
   });
 
+  // Utilize the useAction hook to manage the state of the signIn action
   const { isExecuting, executeAsync, result, hasErrored } = useAction(signIn, {
     onExecute: () => {
       toast.loading("Logging in...");
     },
     onSuccess: () => {
+      // After successful login, prefetch the home page and redirect the user
       router.prefetch("/");
       router.push("/");
       toast.dismiss();
     },
     onError: () => {
+      // Display an error message if login fails
       toast.dismiss();
       toast.error("Login failed");
     },
     onSettled: () => {
+      // Dismiss the loading toast when the action is settled
       toast.dismiss();
     },
   });
 
+  // Extract the login error from the result
   const loginErr =
     result.serverError ||
     result.validationErrors ||
     result.bindArgsValidationErrors;
 
+  // Handle form submission by executing the signIn action
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     await executeAsync(values);
   };

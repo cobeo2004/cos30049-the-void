@@ -1,3 +1,10 @@
+/**
+ * @file date-time-picker.tsx
+ * @description Date and time picker component.
+ * @module Components/DateTimePicker
+ * @see https://shadcnui-expansions.typeart.cc/docs/datetime-picker
+ */
+
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { CalendarProps } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
