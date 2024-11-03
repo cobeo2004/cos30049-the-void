@@ -8,3 +8,4 @@ fastapi-limiter
 pytest
 beautifulsoup4
 serpapi
+google-search-results

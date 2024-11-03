@@ -1,4 +1,4 @@
-from serpapi.google_search import GoogleSearch
+from serpapi import GoogleSearch
 from utils.dotEnv import env
 from models import FlightPriceModel
 
