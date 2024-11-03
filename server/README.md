@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project was bootstrapped with [`FastAPI`](https://fastapi.tiangolo.com), [`Prisma`](https://www.prisma.io), [`Prisma For Python`](https://prisma-client-py.readthedocs.io/en/stable/), [`PostgreSQL`](https://www.postgresql.org) and [`Docker`](https://www.docker.com).
+This project was bootstrapped with [`FastAPI`](https://fastapi.tiangolo.com), [`Prisma`](https://www.prisma.io), [`Prisma For Python`](https://prisma-client-py.readthedocs.io/en/stable/), [`PostgreSQL`](https://www.postgresql.org), [`SerpAPI`](https://serpapi.com) and [`Docker`](https://www.docker.com).
 
 ## Get Started
 
@@ -99,6 +99,7 @@ This project was bootstrapped with [`FastAPI`](https://fastapi.tiangolo.com), [`
   ```py
   # Example from Prisma Client Python
   # See: https://prisma-client-py.readthedocs.io/en/stable/
+  # Note: This is for reference only !
 
   import asyncio
   from prisma import Prisma
@@ -139,7 +140,7 @@ This project was bootstrapped with [`FastAPI`](https://fastapi.tiangolo.com), [`
 - **Finally**: Run the following command to bootstrap the server.
 
   ```bash
-  uvicorn main:app --reload
+  python main.py
   ```
 
 - Voila, now your server is running and will be served (by default) at: http://localhost:8000.
