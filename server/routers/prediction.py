@@ -19,3 +19,11 @@ async def create_prediction(
     controller: PredictionController = Depends(PredictionController),
 ):
     return await controller.make_prediction(data)
+
+@router.get("/charts/data")
+@RateLimiter(max_calls=10, cooldown_time=60)
+async def get_extract_data(
+    req: Request,
+    controller: PredictionController = Depends(PredictionController),
+):
+    return await controller.get_extract_data()

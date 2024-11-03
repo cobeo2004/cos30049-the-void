@@ -1,4 +1,4 @@
 from .DataProcessing import DataProcessing
 from .MLProcessing import MLProcessing
-
-__all__ = ["DataProcessing", "MLProcessing"]
+from .ExtractDataFromCSV import ExtractDataFromCSV
+__all__ = ["DataProcessing", "MLProcessing", "ExtrectDataFromCSV"]
