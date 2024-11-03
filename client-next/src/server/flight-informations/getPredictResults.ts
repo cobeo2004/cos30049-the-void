@@ -25,7 +25,6 @@ export const getPredictResults = authAction
       stops: parsedInput.stops,
       airline: parsedInput.airline,
     };
-
     const response = await authFetch<{ predictions: { prediction: string } }>(
       `${API_URL}/prediction`,
       {

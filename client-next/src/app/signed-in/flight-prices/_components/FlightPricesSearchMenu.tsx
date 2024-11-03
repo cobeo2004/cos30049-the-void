@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plane, Calendar, ArrowRightLeft } from "lucide-react";
+import { Plane, ArrowRightLeft } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { GetDestinationsByRegionNameReturnValue } from "@/server/flight-prices/getDestionations";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,14 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { DateTimePicker } from "@/components/time-picker/date-time-picker";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import LoadingComponent from "@/app/(auth)/_components/loading";
 import { useAction } from "next-safe-action/hooks";
 import { getDestinationsByRegionName } from "@/server/flight-prices/getDestionations";
@@ -292,37 +286,14 @@ function FlightPricesSearchMenu() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Depart</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <CalendarComponent
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date < new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <FormControl>
+                        <DateTimePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          granularity="day"
+                          disabled={false}
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -336,38 +307,14 @@ function FlightPricesSearchMenu() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Return</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <CalendarComponent
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date < new Date() ||
-                                date < new Date("1900-01-01")
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <FormControl>
+                          <DateTimePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            granularity="day"
+                            disabled={false}
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />
