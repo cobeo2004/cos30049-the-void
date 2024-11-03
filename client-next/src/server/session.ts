@@ -14,7 +14,6 @@ export async function validateSession(): Promise<LoginResult | null> {
   const accessToken = cookies().get("access_token")?.value;
   const refreshToken = cookies().get("refresh_token")?.value;
   if (!accessToken || !refreshToken) {
-    console.log("no access token or refresh token");
     return null;
   }
   const result = await fetch(`${API_URL}/auth/me`, {

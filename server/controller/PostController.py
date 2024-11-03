@@ -12,9 +12,7 @@ class Controller:
     async def get_posts(self):
         return await self.db.post.find_many()
 
-    async def get_post(
-        self, item_id: int
-    ):
+    async def get_post(self, item_id: int):
         return await self.db.post.find_unique(where={"id": item_id})
 
     async def add_post(

@@ -45,19 +45,18 @@ export const getFlightPrices = authAction
               infants_on_lap: infants,
             };
 
-      console.log(body);
-      // return await authFetch<SerpResponse>(`${API_URL}/flight-prices`, {
-      //   options: {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(body),
-      //   },
-      //   ctx,
-      // });
+      return await authFetch<SerpResponse>(`${API_URL}/flight-prices`, {
+        options: {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        },
+        ctx,
+      });
 
-      return Promise.resolve(exampleResponse as unknown as SerpResponse);
+      // return Promise.resolve(exampleResponse as unknown as SerpResponse);
     } catch (err) {
       throw new Error((err as Error).message);
     }

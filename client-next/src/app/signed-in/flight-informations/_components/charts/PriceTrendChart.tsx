@@ -27,17 +27,6 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({
     );
   }
 
-  const chartData = data || [
-    { month: "Sep", price: 850, predicted: 820 },
-    { month: "Oct", price: 900, predicted: 880 },
-    { month: "Nov", price: 880, predicted: 920 },
-    { month: "Dec", price: 950, predicted: 900 },
-    { month: "Jan", price: 920, predicted: 940 },
-    { month: "Feb", price: 980, predicted: 960 },
-    { month: "Mar", price: 1000, predicted: 980 },
-    { month: "Apr", price: 1020, predicted: 1000 },
-  ];
-
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="border-b pb-4">
@@ -47,42 +36,36 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({
       </CardHeader>
       <CardContent className="pt-6">
         <div className="h-[300px]">
-          <Plot
-            data={[
-              {
-                x: chartData.map((d) => d!.month),
-                y: chartData.map((d) => d!.price),
-                type: "scatter",
-                mode: "lines+markers",
-                name: "Actual Price",
-                line: { color: "#2563eb" },
-              },
-              {
-                x: chartData.map((d) => d!.month),
-                y: chartData.map((d) => d!.predicted),
-                type: "scatter",
-                mode: "lines+markers",
-                name: "Predicted Price",
-                line: { color: "#10b981", dash: "dash" },
-              },
-            ]}
-            layout={{
-              autosize: true,
-              margin: { l: 50, r: 20, t: 20, b: 80 },
-              showlegend: true,
-              legend: {
-                orientation: "h",
-                yanchor: "bottom",
-                y: -0.4,
-                xanchor: "center",
-                x: 0.5,
-              },
-              xaxis: { title: "Month" },
-              yaxis: { title: "Price (AUD)" },
-            }}
-            style={{ width: "100%", height: 300 }}
-            config={{ responsive: true }}
-          />
+          {data && (
+            <Plot
+              data={[
+                {
+                  x: data.map((d) => d!.month),
+                  y: data.map((d) => d!.price),
+                  type: "scatter",
+                  mode: "lines+markers",
+                  name: "Price",
+                  line: { color: "#2563eb" },
+                },
+              ]}
+              layout={{
+                autosize: true,
+                margin: { l: 50, r: 20, t: 20, b: 80 },
+                showlegend: true,
+                legend: {
+                  orientation: "h",
+                  yanchor: "bottom",
+                  y: -0.4,
+                  xanchor: "center",
+                  x: 0.5,
+                },
+                xaxis: { title: "Month" },
+                yaxis: { title: "Price (AUD)" },
+              }}
+              style={{ width: "100%", height: 300 }}
+              config={{ responsive: true }}
+            />
+          )}
         </div>
       </CardContent>
     </Card>

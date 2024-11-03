@@ -27,7 +27,9 @@ class Controller:
 
     async def get_extract_data(self):
         return {
-            "price_distribution": json.loads(self.dataExtractor.price_distribution_bar_chart()),
+            "price_distribution": json.loads(
+                self.dataExtractor.price_distribution_bar_chart()
+            ),
             "price_trend": json.loads(self.dataExtractor.price_trend_line_chart()),
             "seasonal_analysis": json.loads(self.dataExtractor.seasonal_analysis()),
         }

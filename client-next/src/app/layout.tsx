@@ -28,7 +28,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   await ping();
-  console.log("NODE_ENV", process.env.CHECK_ENV);
   unstable_noStore();
   revalidatePath("/");
   return (

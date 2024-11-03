@@ -27,15 +27,6 @@ export const PriceDistributionChart: React.FC<PriceDistributionChartProps> = ({
     );
   }
 
-  const chartData = data || [
-    { range: "600-700", count: 10 },
-    { range: "700-800", count: 25 },
-    { range: "800-900", count: 40 },
-    { range: "900-1000", count: 30 },
-    { range: "1000-1100", count: 15 },
-    { range: "1100-1200", count: 8 },
-  ];
-
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="border-b pb-4">
@@ -45,25 +36,27 @@ export const PriceDistributionChart: React.FC<PriceDistributionChartProps> = ({
       </CardHeader>
       <CardContent className="pt-6">
         <div className="h-[300px]">
-          <Plot
-            data={[
-              {
-                x: chartData.map((d) => d!.range),
-                y: chartData.map((d) => d!.count),
-                type: "bar",
-                marker: { color: "#3b82f6" },
-              },
-            ]}
-            layout={{
-              autosize: true,
-              margin: { l: 50, r: 20, t: 20, b: 40 },
-              showlegend: false,
-              xaxis: { title: "Price Range (AUD)" },
-              yaxis: { title: "Number of Flights" },
-            }}
-            style={{ width: "100%", height: 300 }}
-            config={{ responsive: true }}
-          />
+          {data && (
+            <Plot
+              data={[
+                {
+                  x: data.map((d) => d!.range),
+                  y: data.map((d) => d!.count),
+                  type: "bar",
+                  marker: { color: "#3b82f6" },
+                },
+              ]}
+              layout={{
+                autosize: true,
+                margin: { l: 50, r: 20, t: 20, b: 40 },
+                showlegend: false,
+                xaxis: { title: "Price Range (AUD)" },
+                yaxis: { title: "Number of Flights" },
+              }}
+              style={{ width: "100%", height: 300 }}
+              config={{ responsive: true }}
+            />
+          )}
         </div>
       </CardContent>
     </Card>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FlightCardSkeleton } from "./FlightCardSkeleton";
 import {
   Table,
@@ -15,9 +15,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const FlightPricesTable: React.FC = () => {
   const searchParams = useSearchParams();
+  const [showRedirectModal, setShowRedirectModal] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState("");
+
   const {
     result: { data: flights, serverError },
     isExecuting: loading,
@@ -50,7 +61,17 @@ export const FlightPricesTable: React.FC = () => {
     doFetching();
   }, [executeAsync]);
 
-  if (hasErrored || serverError) {
+  const handleBookNowClick = (url: string) => {
+    setRedirectUrl(url);
+    setShowRedirectModal(true);
+  };
+
+  const handleRedirectConfirm = () => {
+    window.open(redirectUrl, "_blank");
+    setShowRedirectModal(false);
+  };
+
+  if (hasErrored || (serverError && !flights)) {
     return (
       <div className="container mx-auto p-4 flex items-center justify-center min-h-[400px]">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
@@ -91,6 +112,27 @@ export const FlightPricesTable: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg p-6">
+      <Dialog open={showRedirectModal} onOpenChange={setShowRedirectModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>External Redirect</DialogTitle>
+            <DialogDescription>
+              You are about to be redirected to an external website (Google
+              Flights). Do you want to proceed?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowRedirectModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleRedirectConfirm}>Proceed</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {loading && !flights ? (
         <>
           <FlightCardSkeleton />
@@ -172,14 +214,17 @@ export const FlightPricesTable: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell className="py-6 px-4">
-                    <Link href={flights.search_metadata.google_flights_url}>
-                      <Button
-                        variant="outline"
-                        className="bg-blue-500 text-white px-6 py-3 text-base rounded-md hover:bg-blue-600 transition-colors"
-                      >
-                        Book Now!
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="outline"
+                      className="bg-blue-500 text-white px-6 py-3 text-base rounded-md hover:bg-blue-600 transition-colors"
+                      onClick={() =>
+                        handleBookNowClick(
+                          flights.search_metadata.google_flights_url
+                        )
+                      }
+                    >
+                      Book Now!
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

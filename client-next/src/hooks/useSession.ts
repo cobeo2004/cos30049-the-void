@@ -11,7 +11,6 @@ export function useSession() {
       const session = getSession();
       session
         .then((session) => {
-          console.log("Session fetched:", session);
           setSession(session);
         })
         .catch((error) => {

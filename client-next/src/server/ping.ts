@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 
 export const ping = async () => {
   try {
-    console.log("API_URL", API_URL);
     const result = await fetch(`${API_URL}/ping`);
     if (!result.ok) {
       redirect("/errors/not-ping");

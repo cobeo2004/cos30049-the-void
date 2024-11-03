@@ -1,3 +1,9 @@
+"""
+- File: DataProcessing.py
+- Author: Xuan Tuan Minh Nguyen, Trong Dat Hoang, Henry Nguyen
+- Description: Data preprocessing utilities for machine learning models
+"""
+
 import joblib
 import pandas as pd
 from datetime import datetime
@@ -5,14 +11,23 @@ import os
 from utils.logger import logger
 
 class DataProcessing:
+    """
+    Handles data preprocessing for flight price prediction models
+
+    Attributes:
+        scaler: Loaded standard scaler for numerical features
+        encoder: Loaded encoder for categorical features
+        selected_features: List of features selected during model training
+    """
 
     def __init__(self) -> None:
         """
-        Initialize the DataProcessing class.
-        Load the scaler and encoder used in training.
+        Initialize data processor with pre-trained scalers and encoders
+        Loads:
+        - Feature scaler
+        - Categorical encoder
+        - Selected feature list
         """
-
-        # Load the scaler and encoder used in training
         self.scaler = joblib.load(
             os.path.join(os.path.dirname(__file__), "scaler.pkl")
         )
@@ -25,13 +40,17 @@ class DataProcessing:
 
     def process_data(self, data: pd.DataFrame) -> pd.DataFrame:
         """
-        Process the input data from the front end.
+        Process input data for model prediction
 
-        Parameters:
-            data (pd.DataFrame): Input data containing flight details.
+        Args:
+            data: Input DataFrame containing flight details
 
         Returns:
-            pd.DataFrame: Processed data ready for model prediction.
+            pd.DataFrame: Processed data ready for model prediction
+
+        Raises:
+            ValueError: If input data is not a DataFrame
+            Exception: For any processing errors
         """
         try:
             if not isinstance(data, pd.DataFrame):
@@ -45,29 +64,29 @@ class DataProcessing:
                 data["arrival_date"] + " " + data["arrival_time"]
             )
 
-            # Calculate Flight Duration in minutes
+            # Calculate flight duration in minutes
             data["flight_duration_in_minutes"] = (
                 data["Arrival_datetime"] - data["Departure_datetime"]
             ).dt.total_seconds() / 60
 
-            # Add this new feature calculation
+            # Calculate departure time in minutes from midnight
             data["departure_time_in_minutes_from_midnight"] = (
                 data["Departure_datetime"].dt.hour * 60 + data["Departure_datetime"].dt.minute
             )
 
-            # Extract date features from Departure_datetime
+            # Extract date features
             data["year"] = data["Departure_datetime"].dt.year
             data["day_of_month"] = data["Departure_datetime"].dt.day
             data["month"] = data["Departure_datetime"].dt.month
             data["day_of_week"] = data["Departure_datetime"].dt.dayofweek
 
-            # Calculate Departure_date_distance in days from today
+            # Calculate days until departure
             today = pd.to_datetime(datetime.now().date())
             data["departure_date_distance"] = (
                 pd.to_datetime(data["Departure_datetime"].dt.date) - today
             ).dt.days
 
-            # Handle 'Stops' column; default to 0 if not provided
+            # Handle stops information
             if "Stops" not in data.columns:
                 data["stops"] = 0
             else:
@@ -75,7 +94,7 @@ class DataProcessing:
                     data["Stops"].map({"direct": 0, "1": 1, "2": 2}).astype(int)
                 )
 
-            # Select relevant columns in the correct order based on training
+            # Select and process features
             numerical_cols = [
                 "departure_date_distance",
                 "stops",
@@ -100,12 +119,8 @@ class DataProcessing:
                 index=data.index
             )
 
-            # Final features selected during training
-
-            # Combine numerical and encoded categorical features
+            # Combine features and select final set
             processed_data = pd.concat([data[numerical_cols], encoded_df], axis=1)
-
-            # Only keep the features that were selected during training
             processed_data = processed_data[self.selected_features]
 
             return processed_data

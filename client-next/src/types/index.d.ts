@@ -31,7 +31,6 @@ export declare interface PredictStatistics {
 export declare interface PredictTrendData {
   month: string;
   price: number;
-  predicted: number;
 }
 
 export declare interface PredictDistributionData {
@@ -134,4 +133,20 @@ export declare type SerpResponse = {
   search_parameters: SerpSearchParameters;
   best_flights: Array<SerpBestFlight>;
   airports: Array<SerpAirport>;
+};
+
+export declare type ChartsData = {
+  price_distribution: {
+    range: string;
+    count: number;
+  }[];
+  price_trend: {
+    month: string;
+    price: number;
+  }[];
+  seasonal_analysis: {
+    month: string;
+    demand: number;
+    price: number;
+  }[];
 };

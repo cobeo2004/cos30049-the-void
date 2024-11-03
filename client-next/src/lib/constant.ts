@@ -6,80 +6,80 @@ export const clientsImages = (numberOfClients: number = 14) =>
 export const products = [
   {
     title: "Home Page",
-    link: "https://localhost:3000",
+    link: "",
     thumbnail: "/p1.png",
   },
   {
     title: "Flight Prices",
-    link: "https://localhost:3000/signed-in/flight-prices",
+    link: "/signed-in/flight-prices",
     thumbnail: "/p2.png",
   },
   {
     title: "Price Predictions",
-    link: "https://localhost:3000/signed-in/flight-informations",
+    link: "/signed-in/flight-informations",
     thumbnail: "/p3.png",
   },
 
   {
     title: "Login Page",
-    link: "https://localhost:3000/login",
+    link: "/login",
     thumbnail: "/p4.png",
   },
   {
     title: "Explore Latest Products",
-    link: "https://localhost:3000/",
+    link: "/",
     thumbnail: "/p5.png",
   },
   {
     title: "Flight Price Analysis",
-    link: "https://localhost:3000/signed-in/flight-informations",
+    link: "/signed-in/flight-informations",
     thumbnail: "/p6.png",
   },
 
   {
     title: "Home Page",
-    link: "https://localhost:3000",
+    link: "",
     thumbnail: "/p1.png",
   },
   {
     title: "Flight Prices",
-    link: "https://localhost:3000/signed-in/flight-prices",
+    link: "/signed-in/flight-prices",
     thumbnail: "/p2.png",
   },
   {
     title: "Price Predictions",
-    link: "https://localhost:3000/signed-in/flight-informations",
+    link: "/signed-in/flight-informations",
     thumbnail: "/p3.png",
   },
 
   {
     title: "Login Page",
-    link: "https://localhost:3000/login",
+    link: "/login",
     thumbnail: "/p4.png",
   },
   {
     title: "Explore Latest Products",
-    link: "https://localhost:3000/",
+    link: "/",
     thumbnail: "/p5.png",
   },
   {
     title: "Flight Price Analysis",
-    link: "https://localhost:3000/signed-in/flight-informations",
+    link: "/signed-in/flight-informations",
     thumbnail: "/p6.png",
   },
   {
     title: "Home Page",
-    link: "https://localhost:3000",
+    link: "",
     thumbnail: "/p1.png",
   },
   {
     title: "Flight Prices",
-    link: "https://localhost:3000/signed-in/flight-prices",
+    link: "/signed-in/flight-prices",
     thumbnail: "/p2.png",
   },
   {
     title: "Price Predictions",
-    link: "https://localhost:3000/signed-in/flight-informations",
+    link: "/signed-in/flight-informations",
     thumbnail: "/p3.png",
   },
 ];

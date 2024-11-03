@@ -19,6 +19,10 @@ export const authFetch = async <T>(
     },
   });
   if (!res.ok) {
+    const err = await res.json();
+    if (err && err.detail) {
+      throw new Error(err.detail);
+    }
     throw new Error(res.statusText);
   }
   return (await res.json()) as T;
