@@ -5,7 +5,7 @@ datasource db {
 
 generator client {
     provider               = "prisma-client-py"
-    partial_type_generator = "prisma/generator/Post.py"
+    partial_type_generator = "prisma/generator/Generator.py"
     recursive_type_depth   = 10
 }
 
@@ -14,4 +14,13 @@ model Post {
     title     String
     content   String?
     published Boolean @default(false)
+}
+
+model User {
+    id        String  @id @default(uuid())
+    username  String
+    password  String
+    firstName String?
+    lastName  String?
+    email     String?
 }
