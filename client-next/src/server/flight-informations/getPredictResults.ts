@@ -17,14 +17,14 @@ import { API_URL } from "@/lib/constant";
 
 /**
  * Server action to get flight price predictions and associated visualization data
- * 
+ *
  * @function getPredictResults
  * @async
  * @param {Object} params - The parameters object containing parsed input and context
  * @param {Object} params.parsedInput - Validated flight search parameters
  * @param {Object} params.ctx - Authentication context for the request
  * @returns {Promise<PredictResults>} Promise containing prediction results and visualization data
- * 
+ *
  * @description
  * This function:
  * 1. Validates input using flightInformationsSearchMenuSchema
@@ -60,7 +60,7 @@ export const getPredictResults = authAction
 
     // First API call: Get the price prediction
     const predictionResult = await authFetch<{
-      predictions: { prediction: string };
+      predictions: number;
     }>(`${API_URL}/prediction`, {
       options: {
         headers: {
@@ -90,7 +90,7 @@ export const getPredictResults = authAction
     return {
       statistics: {
         confidence: 92, // Confidence level for the prediction
-        predictedPrice: Number(predictionResult.predictions.prediction),
+        predictedPrice: Number(predictionResult.predictions),
         priceChange: 5.2, // Percentage change in price
         lastUpdated: "2 hours ago",
       },

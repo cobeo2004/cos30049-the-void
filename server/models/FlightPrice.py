@@ -30,9 +30,9 @@ class FlightPriceRequestModel(BaseModel):
     outbound_date: Annotated[str, Doc("""Date of outbound flight""")]
     return_date: Annotated[Optional[str], Doc("""Date of return flight""")] = None
     currency: Annotated[Literal["USD", "AUD", "EUR"], Doc("""Currency for price display""")]
-    adults: Annotated[str, Doc("""Number of adult passengers""")]
-    children: Annotated[str, Doc("""Number of child passengers""")]
-    infants_on_lap: Annotated[str, Doc("""Number of lap infant passengers""")]
+    adults: Annotated[str, Doc("""Number of adult passengers""")] = None
+    children: Annotated[str, Doc("""Number of child passengers""")] = None
+    infants_on_lap: Annotated[str, Doc("""Number of lap infant passengers""")] = None
 
 class FlightPriceSearchMetadata(BaseModel):
     """
@@ -57,7 +57,7 @@ class FlightPriceSearchMetadata(BaseModel):
     google_flights_url: Annotated[str, Doc("""URL for Google Flights search""")]
     raw_html_file: Annotated[str, Doc("""Path to raw HTML file""")]
     prettify_html_file: Annotated[str, Doc("""Path to prettified HTML file""")]
-    total_time_taken: Annotated[float, Doc("""Total time taken for search""")]
+    total_time_taken: Annotated[Optional[float], Doc("""Total time taken for search""")] = None
 
 class FlightPriceSearchParameters(BaseModel):
     """
@@ -78,9 +78,9 @@ class FlightPriceSearchParameters(BaseModel):
     outbound_date: Annotated[str, Doc("""Date of outbound flight""")]
     return_date: Annotated[Optional[str], Doc("""Date of return flight""")] = None
     currency: Annotated[Literal["USD", "AUD", "EUR"], Doc("""Currency for price display""")]
-    adults: Annotated[int, Doc("""Number of adult passengers""")]
-    children: Annotated[int, Doc("""Number of child passengers""")]
-    infants_on_lap: Annotated[int, Doc("""Number of lap infant passengers""")]
+    adults: Annotated[Optional[int], Doc("""Number of adult passengers""")] = None
+    children: Annotated[Optional[int], Doc("""Number of child passengers""")] = None
+    infants_on_lap: Annotated[Optional[int], Doc("""Number of lap infant passengers""")] = None
 
 class FlightPriceFlightAirport(BaseModel):
     """
@@ -93,7 +93,7 @@ class FlightPriceFlightAirport(BaseModel):
     """
     name: Annotated[str, Doc("""Name of the airport""")]
     id: Annotated[str, Doc("""IATA code of the airport""")]
-    time: Annotated[str, Doc("""Time of the flight""")]
+    time: Annotated[Optional[str], Doc("""Time of the flight""")] = None
 
 
 class FlightPriceFlightInformations(BaseModel):
@@ -117,12 +117,12 @@ class FlightPriceFlightInformations(BaseModel):
     arrival_airport: Annotated[FlightPriceFlightAirport, Doc("""Arrival airport information""")]
     airline: Annotated[str, Doc("""Name of the airline""")]
     airplane: Annotated[str, Doc("""Name of the airplane""")]
-    duration: Annotated[int, Doc("""Duration of the flight in minutes""")]
+    duration: Annotated[Optional[int], Doc("""Duration of the flight in minutes""")] = None
     airline_logo: Annotated[str, Doc("""URL of the airline logo""")]
     travel_class: Annotated[str, Doc("""Travel class of the flight""")]
     flight_number: Annotated[str, Doc("""Flight number""")]
-    legroom: Annotated[str, Doc("""Legroom of the flight""")]
-    extensions: Annotated[List[str], Doc("""Additional flight information""")]
+    legroom: Annotated[Optional[str], Doc("""Legroom of the flight""")] = None
+    extensions: Annotated[Optional[List[str]], Doc("""Additional flight information""")] = None
     often_delayed_by_over_30_min: Annotated[Optional[bool], Doc("""Flag for delayed flights""")] = None
 
 
@@ -135,9 +135,9 @@ class FlightPriceCarbonEmissions(BaseModel):
         typical_for_this_route: Typical carbon emissions for this route in grams.
         difference_percent: Difference in carbon emissions percentage.
     """
-    this_flight: Annotated[int, Doc("""Carbon emissions for this flight in grams""")]
-    typical_for_this_route: Annotated[int, Doc("""Typical carbon emissions for this route in grams""")]
-    difference_percent: Annotated[int, Doc("""Difference in carbon emissions percentage""")]
+    this_flight: Annotated[Optional[int], Doc("""Carbon emissions for this flight in grams""")] = None
+    typical_for_this_route: Annotated[Optional[int], Doc("""Typical carbon emissions for this route in grams""")] = None
+    difference_percent: Annotated[Optional[int], Doc("""Difference in carbon emissions percentage""")] = None
 
 
 class FlightPriceBestFlights(BaseModel):
@@ -154,12 +154,12 @@ class FlightPriceBestFlights(BaseModel):
         departure_token: Departure token.
     """
     flights: Annotated[List[FlightPriceFlightInformations], Doc("""List of best flights""")]
-    total_duration: Annotated[int, Doc("""Total duration of the flights in minutes""")]
-    carbon_emissions: Annotated[FlightPriceCarbonEmissions, Doc("""Carbon emissions information""")]
-    price: Annotated[int, Doc("""Total price of the flights in currency units""")]
+    total_duration: Annotated[Optional[int], Doc("""Total duration of the flights in minutes""")] = None
+    carbon_emissions: Annotated[Optional[FlightPriceCarbonEmissions], Doc("""Carbon emissions information""")] = None
+    price: Annotated[Optional[int], Doc("""Total price of the flights in currency units""")] = None
     airline_logo: Annotated[str, Doc("""URL of the airline logo""")]
-    extensions: Annotated[List[str], Doc("""Additional flight information""")]
-    departure_token: Annotated[str, Doc("""Departure token""")]
+    extensions: Annotated[Optional[List[str]], Doc("""Additional flight information""")] = None
+    departure_token: Annotated[Optional[str], Doc("""Departure token""")] = None
 
 
 class FlightPriceAirportDetail(BaseModel):
@@ -223,5 +223,5 @@ class FlightPriceResponseModel(BaseModel):
     best_flights: Annotated[List[FlightPriceBestFlights], Doc("""Best flights information""")]
     other_flights: Annotated[Optional[List[FlightPriceBestFlights]], Doc("""Other flights information""")] = None
     airports: Annotated[List[FlightPriceFromToAirportDetail], Doc("""Airport information""")]
-    price_insights: Annotated[Any, Doc("""Price insights""")]
+    price_insights: Annotated[Any, Doc("""Price insights""")] = None
 
