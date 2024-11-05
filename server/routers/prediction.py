@@ -7,7 +7,7 @@
 from fastapi import APIRouter, Depends, Request
 from controller import PredictionController
 from context.RateLimiterWrapper import RateLimiter
-from models.Predict import PredictRequestModel
+from models.Predict import PredictRequestModel, PredictResponseModel, ChartDataResponseModel
 from utils.auth import get_current_user_id
 
 # Initialize router with authentication requirement
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.post("")
+@router.post("", response_model=PredictResponseModel)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def create_prediction(
     req: Request,
@@ -39,7 +39,7 @@ async def create_prediction(
     return await controller.make_prediction(data)
 
 
-@router.get("/charts/data")
+@router.get("/charts/data", response_model=ChartDataResponseModel)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def get_extract_data(
     req: Request,

@@ -4,14 +4,13 @@
 - Description: Main FastAPI application entry point and configuration
 """
 
-from fastapi import FastAPI, Request, Response
-from pydantic import BaseModel
-from routers import user_router, prediction_router, flight_prices_router
+from fastapi import FastAPI, Request
+from models.PingModels import PingModel
+from routers import user_router, prediction_router, flight_prices_router, auth_router
 from fastapi.middleware.cors import CORSMiddleware
 from context import FastAPILifespan, RateLimiter
 from utils.exceptions import ExceptionHandlerMiddleware
 from utils.logger import logger, LoggingMiddleware
-from routers import auth_router
 from utils.CORS import cors_config
 
 # API version prefix for all routes
@@ -30,10 +29,6 @@ app.add_middleware(
 )
 
 
-class PingModel(BaseModel):
-    """Model for ping response"""
-    message: str
-
 
 # Add logging middleware for request tracking
 app.add_middleware(LoggingMiddleware)
@@ -42,7 +37,7 @@ app.add_middleware(LoggingMiddleware)
 app.add_middleware(ExceptionHandlerMiddleware)
 
 
-@app.get(f"{API_PREFIX}/ping")
+@app.get(f"{API_PREFIX}/ping", response_model=PingModel)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def read_root(req: Request):
     """Health check endpoint"""
