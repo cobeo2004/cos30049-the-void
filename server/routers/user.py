@@ -10,20 +10,19 @@ from controller import UserController
 from prisma.partials import UserForSignUp
 from context.RateLimiterWrapper import RateLimiter
 from utils.auth import get_current_user_id
+from prisma.models import User
+from typing import List
 
 # Initialize router with authentication requirement
 router = APIRouter(
-    prefix="/user",
-    tags=["user"],
-    dependencies=[Depends(get_current_user_id)]
+    prefix="/user", tags=["user"], dependencies=[Depends(get_current_user_id)]
 )
 
 
-@router.get("")
+@router.get("", response_model=List[User])
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def get_all_users(
-    req: Request,
-    controller: UserController = Depends(UserController)
+    req: Request, controller: UserController = Depends(UserController)
 ):
     """
     Get list of all users
@@ -38,12 +37,10 @@ async def get_all_users(
     return await controller.get_users()
 
 
-@router.get("/{item_id}")
+@router.get("/{item_id}", response_model=User)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def get_user_by_id(
-    req: Request,
-    item_id: str,
-    controller: UserController = Depends(UserController)
+    req: Request, item_id: str, controller: UserController = Depends(UserController)
 ):
     """
     Get user by ID
@@ -59,7 +56,7 @@ async def get_user_by_id(
     return await controller.get_user(item_id)
 
 
-@router.post("")
+@router.post("", response_model=User)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def create_user(
     req: Request,
@@ -80,7 +77,7 @@ async def create_user(
     return await controller.create_user(model)
 
 
-@router.put("/{item_id}")
+@router.put("/{item_id}", response_model=User)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def update_user(
     req: Request,
@@ -103,12 +100,10 @@ async def update_user(
     return await controller.update_user(item_id, model)
 
 
-@router.delete("/{item_id}")
+@router.delete("/{item_id}", response_model=User)
 @RateLimiter(max_calls=10, cooldown_time=60)
 async def delete_user(
-    req: Request,
-    item_id: str,
-    controller: UserController = Depends(UserController)
+    req: Request, item_id: str, controller: UserController = Depends(UserController)
 ):
     """
     Delete user

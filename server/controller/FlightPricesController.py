@@ -5,7 +5,7 @@
 """
 
 from utils.CSVs import ICAOReader, AirplaneCarrierReader
-from models import DestinationModel, FlightPriceModel
+from models import DestinationModel, FlightPriceRequestModel, FlightPriceResponseModel
 from utils.Serp import SerpHelper
 from fastapi import HTTPException
 
@@ -71,7 +71,7 @@ class FlightPricesController:
             ))
         return destinations
 
-    def get_flight_prices(self, params: FlightPriceModel) -> dict:
+    def get_flight_prices(self, params: FlightPriceRequestModel) -> FlightPriceResponseModel:
         """
         Get flight prices from SerpAPI
 
@@ -79,7 +79,7 @@ class FlightPricesController:
             params: Flight search parameters
 
         Returns:
-            dict: Flight price data and search results
+            FlightPriceResponseModel: Flight price data and search results
 
         Raises:
             HTTPException: If API request fails

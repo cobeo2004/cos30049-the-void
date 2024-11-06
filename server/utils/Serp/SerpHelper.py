@@ -6,7 +6,7 @@
 
 from serpapi.google_search import GoogleSearch
 from utils.dotEnv import env
-from models import FlightPriceModel
+from models import FlightPriceRequestModel, FlightPriceResponseModel
 
 class SerpHelper:
     """
@@ -22,7 +22,7 @@ class SerpHelper:
         """Initialize with empty parameters dictionary"""
         self.params = {}
 
-    def get_flight_prices(self, params: FlightPriceModel) -> dict:
+    def get_flight_prices(self, params: FlightPriceRequestModel) -> FlightPriceResponseModel:
         """
         Get flight prices from Google Flights via SerpAPI
 
@@ -30,7 +30,7 @@ class SerpHelper:
             params: Flight search parameters including dates, locations, passengers
 
         Returns:
-            dict: Flight price data and search results
+            FlightPriceResponseModel: Flight price data and search results
 
         Raises:
             Exception: If SerpAPI returns an error

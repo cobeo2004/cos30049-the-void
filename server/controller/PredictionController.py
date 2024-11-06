@@ -4,13 +4,14 @@
 - Description: Controller handling flight price prediction operations
 """
 
-from models.Predict import PredictRequestModel
+from models.Predict import PredictRequestModel, PredictResponseModel, ChartDataResponseModel
 from utils.MLs.DataProcessing import DataProcessing
 from utils.MLs.MLProcessing import MLProcessing
 from utils.MLs.ExtractDataFromCSV import ExtractDataFromCSV
 import pandas as pd
 import json
 from fastapi.encoders import jsonable_encoder
+from utils.logger import logger
 
 
 class Controller:
@@ -29,7 +30,7 @@ class Controller:
         self.mlProcessor = MLProcessing()
         self.dataExtractor = ExtractDataFromCSV()
 
-    async def make_prediction(self, data: PredictRequestModel):
+    async def make_prediction(self, data: PredictRequestModel) -> PredictResponseModel:
         """
         Generate flight price predictions
 
@@ -47,19 +48,18 @@ class Controller:
 
         # Generate predictions
         predictions = self.mlProcessor.predict(df)
-        return {
-            "predictions": predictions,
-        }
+        return predictions
 
-    async def get_extract_data(self):
+    async def get_extract_data(self) -> ChartDataResponseModel:
         """
         Get data for various visualizations
 
         Returns:
             dict: Data for price distribution, trends, and seasonal analysis
         """
-        return {
+        res: ChartDataResponseModel = {
             "price_distribution": json.loads(self.dataExtractor.price_distribution_bar_chart()),
             "price_trend": json.loads(self.dataExtractor.price_trend_line_chart()),
             "seasonal_analysis": json.loads(self.dataExtractor.seasonal_analysis()),
         }
+        return res

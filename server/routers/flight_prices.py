@@ -8,7 +8,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from controller import FlightPricesController
 from models import DestinationModel
-from models.FlightPrice import FlightPriceModel
+from models.FlightPrice import FlightPriceRequestModel, FlightPriceResponseModel
 from utils.auth import get_current_user_id
 
 # Initialize router with authentication requirement
@@ -54,9 +54,9 @@ async def get_destination(
     return destination
 
 
-@router.post("")
+@router.post("", response_model=FlightPriceResponseModel)
 async def get_flight_prices(
-    params: FlightPriceModel,
+    params: FlightPriceRequestModel,
     controller: FlightPricesController = Depends(FlightPricesController),
 ):
     """
@@ -67,7 +67,7 @@ async def get_flight_prices(
         controller: Flight prices controller instance
 
     Returns:
-        dict: Flight price information
+        FlightPriceResponseModel: Flight price information
     """
     flight_prices = controller.get_flight_prices(params)
     return flight_prices
