@@ -13,7 +13,6 @@ import "./globals.css";
 // Import UI components and utilities
 import { Toaster } from "@/components/ui/sonner";
 import { revalidatePath, unstable_noStore } from "next/cache";
-import { ping } from "@/server/ping";
 
 // Load the Geist Sans variable font with specified weights
 const geistSans = localFont({
@@ -40,8 +39,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Ping the server to keep the connection alive
-  await ping();
   // Instruct Next.js not to cache this layout
   unstable_noStore();
   // Revalidate the root path to ensure fresh data
