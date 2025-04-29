@@ -13,6 +13,7 @@ export default function withHeaderMiddleware(
   ) => {
     const headers = new Headers(request.headers);
     headers.set("x-current-path", request.nextUrl.pathname);
+    console.log(headers.get("x-middleware-subrequest"));
     return middleware(request, event, response);
   };
 }
